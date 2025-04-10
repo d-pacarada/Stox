@@ -8,8 +8,6 @@ import metode from "./assets/metode_EOQ__Economic_Order_Quantity__dalam_manajeme
 import Vector from "./assets/Vector.png";
 import "./index.css";
 import { Menu, X } from "lucide-react"; 
-import { Link } from 'react-router-dom';
-
 
 function Landingpage() {
   const navigate = useNavigate();
@@ -24,10 +22,10 @@ function Landingpage() {
             <img src={stoxLogo} alt="stoxLogo" className="h-10 w-auto" />
           </div>
           <div className="hidden md:flex items-center space-x-7">
-          <Link to="/landingpage" className="text-gray-800">Home</Link>
-            <Link to="/contact" className="text-gray-800">Contact</Link>
-            <Link to="/signup" className="bg-[#112D4E] text-white px-4 py-2 rounded-lg hover:bg-gray-50 hover:text-blue-500 hover:border hover:border-blue-500"> Sign Up</Link>
-            <Link to="/login" className="bg-white text-[#112D4E] px-4 py-2 border border-[#112D4E] rounded-lg hover:bg-[#112D4E] hover:text-gray-50"> Login</Link>
+            <a href="#" className="text-gray-800">Home</a>
+            <a href="#" className="text-gray-800">Contact</a>
+            <a href="#" className="bg-[#112D4E] text-white px-4 py-2 rounded-lg hover:bg-blue-600">Sign Up</a>
+            <a href="#" className="bg-white text-[#112D4E] px-4 py-2 border border-[#112D4E] rounded-lg hover:bg-blue-100">Login</a>
           </div>
           {/* Hamburger for mobile */}
           <div className="md:hidden">
@@ -39,16 +37,16 @@ function Landingpage() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-        <div className="flex flex-col md:hidden items-center space-y-2 pb-4">
-          <Link to="/" className="text-gray-800">Home</Link>
-          <Link to="/contact" className="text-gray-800">Contact</Link>
-          <Link to="/signup" className="bg-[#112D4E] text-white px-4 py-2 rounded-lg hover:bg-gray-50 hover:text-blue-500 hover:border hover:border-blue-500">Sign Up</Link>
-          <Link to="/login" className="bg-white text-[#112D4E] px-4 py-2 border border-[#112D4E] rounded-lg hover:bg-[#112D4E] hover:text-gray-50">Login</Link>
-        </div>
+          <div className="flex flex-col md:hidden items-center space-y-2 pb-4">
+            <a href="#" className="text-gray-800">Home</a>
+            <a href="#" className="text-gray-800">Contact</a>
+            <a href="#" className="bg-[#112D4E] text-white px-4 py-2 rounded-lg hover:bg-blue-600">Sign Up</a>
+            <a href="#" className="bg-white text-[#112D4E] px-4 py-2 border border-[#112D4E] rounded-lg hover:bg-blue-100">Login</a>
+          </div>
         )}
 
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between mt-10 md:mt-0">
+        <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="text-center md:text-left md:ml-10">
             <p className="text-4xl md:text-5xl text-[#112D4E] mb-1 font-bold">A New Era in Stock Tracking</p>
             <p className="text-4xl md:text-5xl text-amber-500 font-bold">Easy, Fast, Reliable!</p>
