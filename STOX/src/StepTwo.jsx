@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import illustration from "./assets/illustration.png";
-import stoxLogo from "./assets/stox-logo.png";
+import illustration from "./assets/images/illustration.png";
+import stoxLogo from "./assets/images/stox-logo.png";
 import { useNavigate } from "react-router-dom";
 
 const StepTwo = () => {

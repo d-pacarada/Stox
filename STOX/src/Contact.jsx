@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import stoxLogo from "./assets/stox-logo.png";
-import illustration from "./assets/illustration.png";
+import stoxLogo from "./assets/images/stox-logo.png";
+import illustration from "./assets/images/illustration.png";
 import "./index.css";
 
 function Contact() {
