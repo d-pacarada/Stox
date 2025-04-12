@@ -69,7 +69,7 @@ const Login = () => {
         <div className="flex items-center justify-between w-full max-w-[600px] mb-8 h-10 relative">
           <button
             type="button"
-            className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors font-outfit"
+            className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors bg-transparent border-none outline-none font-outfit cursor-pointer"
             onClick={() => navigate(-1)}
           >
             &lt;&lt; Back

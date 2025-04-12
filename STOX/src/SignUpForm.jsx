@@ -92,59 +92,71 @@ const SignUpForm = () => {
 
         {/* Form */}
         <form
-          onSubmit={handleSubmit}
-          className="w-full max-w-[500px] flex flex-col items-stretch"
-        >
-          {[
-            {
-              id: "businessName",
-              label: "Business name",
-              placeholder: "Example business LLC",
-            },
-            { id: "email", label: "Email", placeholder: "business@domain.com" },
-            {
-              id: "businessNumber",
-              label: "Business number",
-              placeholder: "123456789",
-            },
-            { id: "address", label: "Address", placeholder: "Prishtina" },
-          ].map(({ id, label, placeholder }) => (
-            <fieldset
-              key={id}
-              className={`relative border border-gray-400 rounded-md mb-5 w-full max-w-[600px] px-3 pt-3 pb-2 ${
-                errors[id] ? "border-red-500" : ""
-              }`}
-            >
-              <legend className="px-1 text-xs text-gray-800 font-medium">
-                {label}
-              </legend>
-              <input
-                id={id}
-                name={id}
-                maxLength={id === "businessNumber" ? 9 : undefined}
-                pattern={id === "businessNumber" ? "\\d*" : undefined}
-                value={formData[id]}
-                onChange={handleChange}
-                placeholder={placeholder}
-                className={`w-full text-sm font-outfit placeholder-montserrat outline-none bg-white ${
-                  errors[id] ? "text-red-500" : "text-black"
-                }`}
-              />
-              {errors[id] && (
-                <small className="absolute left-3 bottom-[-18px] text-red-500 text-xs font-montserrat">
-                  {errors[id]}
-                </small>
-              )}
-            </fieldset>
-          ))}
+  onSubmit={handleSubmit}
+  className="w-full max-w-[500px] flex flex-col items-stretch"
+>
+  <fieldset className="mb-6">
+    <legend className="text-base font-semibold text-[#0d274b] mb-4 px-1">    </legend>
 
-          <button
-            type="submit"
-            className="w-full max-w-[600px] mx-auto mt-2 py-3 bg-[#0d274b] text-white rounded-md text-base font-medium cursor-pointer"
-          >
-            Continue
-          </button>
-        </form>
+    {[
+      {
+        id: "businessName",
+        label: "Business name",
+        placeholder: "Example business LLC",
+      },
+      {
+        id: "email",
+        label: "Email",
+        placeholder: "business@domain.com",
+      },
+      {
+        id: "businessNumber",
+        label: "Business number",
+        placeholder: "123456789",
+      },
+      {
+        id: "address",
+        label: "Address",
+        placeholder: "Prishtina",
+      },
+    ].map(({ id, label, placeholder }) => (
+      <fieldset
+        key={id}
+        className={`relative border border-gray-400 rounded-md mb-5 w-full max-w-[600px] px-3 pt-3 pb-2 ${
+          errors[id] ? "border-red-500" : ""
+        }`}
+      >
+        <legend className="px-1 text-xs text-gray-800 font-medium">
+          {label}
+        </legend>
+        <input
+          id={id}
+          name={id}
+          maxLength={id === "businessNumber" ? 9 : undefined}
+          pattern={id === "businessNumber" ? "\\d*" : undefined}
+          value={formData[id]}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className={`w-full text-sm font-outfit placeholder-montserrat outline-none bg-white ${
+            errors[id] ? "text-red-500" : "text-black"
+          }`}
+        />
+        {errors[id] && (
+          <small className="absolute left-3 bottom-[-18px] text-red-500 text-xs font-montserrat">
+            {errors[id]}
+          </small>
+        )}
+      </fieldset>
+    ))}
+  </fieldset>
+
+  <button
+    type="submit"
+    className="w-full max-w-[600px] mx-auto mt-2 py-3 bg-[#0d274b] text-white rounded-md text-base font-medium cursor-pointer"
+  >
+    Continue
+  </button>
+</form>
 
         {/* Login Link */}
         <p className="mt-5 text-sm text-center">
