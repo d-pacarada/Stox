@@ -3,6 +3,8 @@ import Landingpage from './Landingpage';
 import SignUpForm from './SignUpForm';
 import StepTwo from './StepTwo'; 
 import Contact from './Contact';
+import SidebarUser from "../src/assets/Components/SidebarUser";
+
 
 import Login from './Login';
 
@@ -17,6 +19,7 @@ function App() {
       <Route path="/step2" element={<StepTwo />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/SidebarUser" element={<SidebarUser />} />
     </Routes>
   );
 }
