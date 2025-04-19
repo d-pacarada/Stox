@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import stoxLogo from "./assets/images/stox-logo.png";
-import landing1 from "./assets/images/landing1.png";
-import Icon from "./assets/images/Icon.png";
-import Icon2 from "./assets/images/Icon2.png";
-import metode from "./assets/images/metode_EOQ__Economic_Order_Quantity__dalam_manajemen_inventori-removebg-preview 1.png";
-import Vector from "./assets/images/Vector.png";
-import "./index.css";
+import stoxLogo from "../assets/images/stox-logo.png";
+import landing1 from "../assets/images/landing1.png";
+import Icon from "../assets/images/Icon.png";
+import Icon2 from "../assets/images/Icon2.png";
+import metode from "../assets/images/metode_EOQ__Economic_Order_Quantity__dalam_manajemen_inventori-removebg-preview 1.png";
+import Vector from "../assets/images/Vector.png";
+import "../index.css";
 import { Menu, X } from "lucide-react"; 
 import { Link } from 'react-router-dom';
 

@@ -1,18 +1,14 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Landingpage from './Landingpage';
-import SignUpForm from './SignUpForm';
-import StepTwo from './StepTwo'; 
-import Contact from './Contact';
-import SidebarUser from "../src/assets/Components/SidebarUser";
-
-
-import Login from './Login';
-
+import Landingpage from './Page/Landingpage';
+import SignUpForm from './Page/SignUpForm';
+import StepTwo from './Page/StepTwo';
+import Contact from './Page/Contact';
+import Login from './Page/Login';
+import SidebarUser from './assets/Components/SidebarUser';
 
 function App() {
   return (
     <Routes>
-
       <Route path="/" element={<Navigate to="/landingpage" />} />
       <Route path="/landingpage" element={<Landingpage />} />
       <Route path="/signup" element={<SignUpForm />} />

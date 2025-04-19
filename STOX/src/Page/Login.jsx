@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import illustration from "./assets/images/illustration.png";
-import stoxLogo from "./assets/images/stox-logo.png";
 import { useNavigate } from "react-router-dom";
+import illustration from "../assets/images/illustration.png";
+import stoxLogo from "../assets/images/stox-logo.png";
 
-const SignUpForm = () => {
+const Login = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
-    businessName: "",
     email: "",
-    businessNumber: "",
-    address: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -18,17 +15,12 @@ const SignUpForm = () => {
   const validate = () => {
     const newErrors = {};
 
-    if (!/^[a-zA-Z0-9\s.,&\-()']+$/.test(formData.businessName)) {
-      newErrors.businessName = "Invalid characters in business name";
-    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Invalid email format";
     }
-    if (!/^\d{9}$/.test(formData.businessNumber)) {
-      newErrors.businessNumber = "Business number must be exactly 9 digits";
-    }
-    if (!/^[a-zA-Z0-9\s]+$/.test(formData.address)) {
-      newErrors.address = "Address must contain only letters and numbers";
+
+    if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     setErrors(newErrors);
@@ -48,15 +40,15 @@ const SignUpForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log("Form submitted:", formData);
-      navigate("/step2");
+      console.log("Login submitted:", formData);
+      navigate("/dashboard");
     }
   };
 
   return (
     <div className="flex justify-center bg-white min-h-screen font-sans px-4 md:px-10 xl:px-24">
       <div className="flex flex-col xl:flex-row w-full max-w-[1440px]">
-        {/* Left Image Panel */}
+        {/* Left Illustration */}
         <div className="hidden xl:flex w-1/2 items-center justify-start px-8">
           <div className="border-[10px] border-[#0d274b] rounded-xl p-2 bg-white">
             <img
@@ -76,7 +68,7 @@ const SignUpForm = () => {
             className="w-[250px] h-[70px] object-contain mb-12 self-start"
           />
 
-          {/* Header Row */}
+          {/* Header */}
           <div className="flex items-center justify-between w-full max-w-[600px] mb-8 h-10 relative">
             <button
               type="button"
@@ -86,11 +78,8 @@ const SignUpForm = () => {
               &lt;&lt; Back
             </button>
             <h2 className="text-xl font-bold text-center absolute left-1/2 transform -translate-x-1/2 font-outfit leading-none">
-              Sign Up
+              Login
             </h2>
-            <p className="text-sm text-gray-600 whitespace-nowrap font-outfit leading-none">
-              1 Step 2
-            </p>
           </div>
 
           {/* Form */}
@@ -100,26 +89,18 @@ const SignUpForm = () => {
           >
             {[
               {
-                id: "businessName",
-                label: "Business name",
-                placeholder: "Example business LLC",
-              },
-              {
                 id: "email",
                 label: "Email",
-                placeholder: "business@domain.com",
+                type: "email",
+                placeholder: "you@example.com",
               },
               {
-                id: "businessNumber",
-                label: "Business number",
-                placeholder: "123456789",
+                id: "password",
+                label: "Password",
+                type: "password",
+                placeholder: "Enter your password",
               },
-              {
-                id: "address",
-                label: "Address",
-                placeholder: "Prishtina",
-              },
-            ].map(({ id, label, placeholder }) => (
+            ].map(({ id, label, type, placeholder }) => (
               <div key={id} className="space-y-1">
                 <fieldset
                   className={`border rounded-md px-3 pt-1 pb-2 ${
@@ -130,8 +111,7 @@ const SignUpForm = () => {
                   <input
                     id={id}
                     name={id}
-                    maxLength={id === "businessNumber" ? 9 : undefined}
-                    pattern={id === "businessNumber" ? "\\d*" : undefined}
+                    type={type}
                     value={formData[id]}
                     onChange={handleChange}
                     placeholder={placeholder}
@@ -144,19 +124,30 @@ const SignUpForm = () => {
               </div>
             ))}
 
+            {/* Forgot Password */}
+            <div className="w-full text-right -mt-2">
+              <a
+                href="#"
+                className="text-sm text-amber-500 hover:underline font-medium"
+              >
+                Forgot Password?
+              </a>
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-[#0d274b] text-white font-semibold py-3 rounded-md hover:bg-[#0b213f] transition duration-300"
             >
-              Continue
+              Login
             </button>
           </form>
 
-          {/* Login Link */}
+          {/* Sign Up Link */}
           <p className="mt-5 text-sm text-center">
-            Already have an account?{" "}
-            <a href="/login" className="text-amber-500 font-medium hover:underline">
-              Login
+            Don’t have an account?{" "}
+            <a href="/signup" className="text-amber-500 font-medium hover:underline">
+              Sign up
             </a>
           </p>
         </div>
@@ -165,4 +156,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default Login;
