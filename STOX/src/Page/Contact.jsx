@@ -65,7 +65,7 @@ function Contact() {
               <legend className="text-sm text-gray-600 px-1">Email</legend>
               <input
                 type="email"
-                placeholder="metech@gmail.com"
+                placeholder="business@domain.com"
                 className="w-full border-none outline-none text-gray-800"
               />
             </fieldset>
