@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import illustration from "../assets/images/illustration.png";
 import stoxLogo from "../assets/images/stox-logo.png";
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -130,7 +131,7 @@ const Login = () => {
                 href="#"
                 className="text-sm text-amber-500 hover:underline font-medium"
               >
-                Forgot Password?
+               <Link to="/forgotpassword" className="text-amber-500">Forgot Password?</Link>
               </a>
             </div>
 

@@ -7,8 +7,6 @@ import shape from "../images/shape.png";
 import shoppingcart from "../images/shoppingcart.png";
 import user from "../images/user.png";
 
-
-
 function SidebarUser() {
   return (
     <div>
