@@ -5,6 +5,7 @@ import StepTwo from './Page/StepTwo';
 import Contact from './Page/Contact';
 import Login from './Page/Login';
 import Forgotpassword from './Page/Forgotpassword';
+import UserDashboard from './Page/UserDashboard';
 import SidebarUser from './assets/Components/SidebarUser';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
       <Route path="/Forgotpassword" element={<Forgotpassword />} />
+      <Route path="/UserDashboard" element={<UserDashboard />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />
     </Routes>
   );
