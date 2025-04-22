@@ -6,7 +6,9 @@ import Contact from './Page/Contact';
 import Login from './Page/Login';
 import Forgotpassword from './Page/Forgotpassword';
 import UserDashboard from './Page/UserDashboard';
+import AdminDashboard from './Page/AdminDashboard';
 import SidebarUser from './assets/Components/SidebarUser';
+import SidebarAdmin from './assets/Components/SidebarAdmin';
 
 function App() {
   return (
@@ -19,7 +21,9 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/Forgotpassword" element={<Forgotpassword />} />
       <Route path="/UserDashboard" element={<UserDashboard />} />
+      <Route path="/AdminDashboard" element={<AdminDashboard />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />
+      <Route path="/SidebarAdmin" element={<SidebarAdmin />} />
     </Routes>
   );
 }
