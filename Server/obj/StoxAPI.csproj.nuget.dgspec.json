@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI\\StoxAPI.csproj": {}
+    "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI\\StoxAPI.csproj": {
+    "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI\\StoxAPI.csproj",
+        "projectUniqueName": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj",
         "projectName": "StoxAPI",
-        "projectPath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI\\StoxAPI.csproj",
+        "projectPath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj",
         "packagesPath": "C:\\Users\\38349\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI\\obj\\",
+        "outputPath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\38349\\AppData\\Roaming\\NuGet\\NuGet.Config"

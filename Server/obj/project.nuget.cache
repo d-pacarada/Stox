@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "b0LG88Ohv9Q=",
+  "dgSpecHash": "L1j5r5Srrug=",
   "success": true,
-  "projectFilePath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI\\StoxAPI.csproj",
+  "projectFilePath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\38349\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.15\\microsoft.aspnetcore.openapi.8.0.15.nupkg.sha512",
     "C:\\Users\\38349\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

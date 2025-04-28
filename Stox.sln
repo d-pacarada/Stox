@@ -1,10 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{DAD03CFC-D5FA-AC94-41C7-9ABAB326F09E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server\Server.csproj", "{83146BE1-3282-5DD5-1E4D-C009A968B7D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoxAPI", "Server\StoxAPI.csproj", "{DC9F0EB0-CC91-4CCD-9BA4-F7335017C453}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,16 +10,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{83146BE1-3282-5DD5-1E4D-C009A968B7D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83146BE1-3282-5DD5-1E4D-C009A968B7D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83146BE1-3282-5DD5-1E4D-C009A968B7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83146BE1-3282-5DD5-1E4D-C009A968B7D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC9F0EB0-CC91-4CCD-9BA4-F7335017C453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC9F0EB0-CC91-4CCD-9BA4-F7335017C453}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC9F0EB0-CC91-4CCD-9BA4-F7335017C453}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC9F0EB0-CC91-4CCD-9BA4-F7335017C453}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{83146BE1-3282-5DD5-1E4D-C009A968B7D2} = {DAD03CFC-D5FA-AC94-41C7-9ABAB326F09E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C369B0D3-43D8-4960-ADC2-0236C70055EC}
