@@ -1,0 +1,6 @@
+@StoxAPI_HostAddress = http://localhost:5064
+
+GET {{StoxAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
