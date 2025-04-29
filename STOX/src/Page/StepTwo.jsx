@@ -45,13 +45,61 @@ const StepTwo = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log("Step 2 Data:", formData);
-      // Submit or navigate next
+      try {
+        const signupStep1Raw = localStorage.getItem("signupStep1");
+  
+        if (!signupStep1Raw) {
+          alert("Step 1 data missing. Please restart the signup process.");
+          navigate("/signup"); // send user back to start
+          return;
+        }
+  
+        const step1Data = JSON.parse(signupStep1Raw);
+  
+        const allFormData = {
+          businessName: step1Data.businessName,
+          email: step1Data.email,
+          businessNumber: step1Data.businessNumber,
+          address: step1Data.address,
+          phone: formData.phone,
+          transit: formData.transit,
+          password: formData.password,
+        };
+  
+        const response = await fetch("http://localhost:5064/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(allFormData),
+        });        
+  
+        if (!response.ok) {
+          const error = await response.text();
+          alert(`Error: ${error}`);
+          return;
+        }
+  
+        const data = await response.json();
+        localStorage.removeItem("signupStep1"); // Clear after successful signup
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role); // save role for later if needed
+        console.log("Signup successful:", data.token, data.role);
+
+        // Navigate based on role
+        if (data.role === "Admin") {
+        navigate("/AdminDashboard");
+        } else {
+        navigate("/UserDashboard");
+        }
+
+      } catch (error) {
+        console.error("Registration failed:", error);
+        alert("Registration failed. Try again.");
+      }
     }
-  };
+  };  
 
   return (
     <div className="flex justify-center bg-white min-h-screen font-outfit px-4 md:px-10 xl:px-24">

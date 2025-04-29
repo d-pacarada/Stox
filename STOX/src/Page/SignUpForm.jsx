@@ -48,10 +48,13 @@ const SignUpForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
+      // Save step 1 form data to localStorage
+      localStorage.setItem("signupStep1", JSON.stringify(formData));
+  
       console.log("Form submitted:", formData);
       navigate("/step2");
     }
-  };
+  };  
 
   return (
     <div className="flex justify-center bg-white min-h-screen font-sans px-4 md:px-10 xl:px-24">

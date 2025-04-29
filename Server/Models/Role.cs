@@ -1,8 +1,9 @@
-namespace Server.Models
+using System.ComponentModel.DataAnnotations;
+
+public class Role
 {
-    public class Role
-    {
-        public int Role_ID { get; set; }
-        public string Role_Name { get; set; }
-    }
+    [Key]
+    public int Role_ID { get; set; }
+
+    public string Role_Name { get; set; }
 }

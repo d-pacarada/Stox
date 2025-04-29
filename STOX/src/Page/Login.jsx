@@ -38,13 +38,7 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      console.log("Login submitted:", formData);
-      navigate("/dashboard");
-    }
-  };
+
 
   return (
     <div className="flex justify-center bg-white min-h-screen font-sans px-4 md:px-10 xl:px-24">
@@ -155,6 +149,6 @@ const Login = () => {
       </div>
     </div>
   );
-};
+};  
 
 export default Login;
