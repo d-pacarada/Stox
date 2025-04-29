@@ -5,6 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 
 // 👇 ADD THIS
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -24,6 +28,13 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
@@ -31,3 +42,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
