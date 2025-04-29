@@ -26,3 +26,16 @@ dist-ssr
 # Ignore bin and obj folders inside Server project
 Server/bin/
 Server/obj/
+
+# Ignore build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Ignore user-specific and build tool files
+*.user
+*.vs/
+.vscode/
