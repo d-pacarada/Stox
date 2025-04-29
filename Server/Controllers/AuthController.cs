@@ -43,12 +43,10 @@ namespace Server.Controllers
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
-            // Retrieve the saved user
             var createdUser = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (createdUser == null)
                 return StatusCode(500, "Failed to retrieve newly created user.");
 
-            // Assign default role: 'User'
             var defaultRole = await _context.Role.FirstOrDefaultAsync(r => r.Role_Name == "User");
             if (defaultRole == null)
                 return StatusCode(500, "Default role 'User' not found.");
@@ -62,7 +60,6 @@ namespace Server.Controllers
             _context.UserRole.Add(userRole);
             await _context.SaveChangesAsync();
 
-            // Retrieve assigned role name (optional here, but required in response)
             var role = await _context.UserRole
                 .Include(ur => ur.Role)
                 .Where(ur => ur.User_ID == createdUser.User_ID)
@@ -71,6 +68,23 @@ namespace Server.Controllers
 
             var token = GenerateJwtToken(createdUser);
 
+            return Ok(new { token, role });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                return Unauthorized("Invalid email or password.");
+
+            var role = await _context.UserRole
+                .Include(ur => ur.Role)
+                .Where(ur => ur.User_ID == user.User_ID)
+                .Select(ur => ur.Role.Role_Name)
+                .FirstOrDefaultAsync();
+
+            var token = GenerateJwtToken(user);
             return Ok(new { token, role });
         }
 
@@ -106,6 +120,12 @@ namespace Server.Controllers
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Transit { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }
