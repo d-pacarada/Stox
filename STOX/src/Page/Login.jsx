@@ -38,7 +38,39 @@ const Login = () => {
     });
   };
 
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch("http://localhost:5064/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        alert(`Login failed: ${errorText}`);
+        return;
+      }
+  
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+  
+      console.log("Login success:", data.token, data.role);
+  
+      if (data.role === "Admin") {
+        navigate("/AdminDashboard");
+      } else {
+        navigate("/UserDashboard");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  };  
+  
 
   return (
     <div className="flex justify-center bg-white min-h-screen font-sans px-4 md:px-10 xl:px-24">
