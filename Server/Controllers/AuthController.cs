@@ -88,6 +88,16 @@ namespace Server.Controllers
             return Ok(new { token, role });
         }
 
+        [HttpPost("check-email")]
+        public async Task<IActionResult> CheckEmail([FromBody] EmailCheckRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return BadRequest("Email is required.");
+
+            var exists = await _context.User.AnyAsync(u => u.Email == request.Email);
+            return Ok(new { exists });
+        }
+
         private string GenerateJwtToken(User user)
         {
             var keyString = _config["Jwt:Key"];
@@ -112,6 +122,7 @@ namespace Server.Controllers
         }
     }
 
+    // Request Models
     public class RegisterRequest
     {
         public string BusinessName { get; set; }
@@ -127,5 +138,10 @@ namespace Server.Controllers
     {
         public string Email { get; set; }
         public string Password { get; set; }
+    }
+
+    public class EmailCheckRequest
+    {
+        public string Email { get; set; }
     }
 }

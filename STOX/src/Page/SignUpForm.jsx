@@ -14,9 +14,11 @@ const SignUpForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [emailExists, setEmailExists] = useState(false);
 
   const validate = () => {
     const newErrors = {};
+    setEmailExists(false);
 
     if (!/^[a-zA-Z0-9\s.,&\-()']+$/.test(formData.businessName)) {
       newErrors.businessName = "Invalid characters in business name";
@@ -43,23 +45,38 @@ const SignUpForm = () => {
       delete newErrors[name];
       return newErrors;
     });
+    if (name === "email") setEmailExists(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      // Save step 1 form data to localStorage
-      localStorage.setItem("signupStep1", JSON.stringify(formData));
-  
-      console.log("Form submitted:", formData);
-      navigate("/step2");
+      try {
+        const checkRes = await fetch("http://localhost:5064/api/auth/check-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email })
+        });
+
+        const { exists } = await checkRes.json();
+
+        if (exists) {
+          setEmailExists(true);
+          return;
+        }
+
+        localStorage.setItem("signupStep1", JSON.stringify(formData));
+        console.log("Form submitted:", formData);
+        navigate("/step2");
+      } catch (error) {
+        console.error("Email check failed:", error);
+      }
     }
-  };  
+  };
 
   return (
     <div className="flex justify-center bg-white min-h-screen font-sans px-4 md:px-10 xl:px-24">
       <div className="flex flex-col xl:flex-row w-full max-w-[1440px]">
-        {/* Left Image Panel */}
         <div className="hidden xl:flex w-1/2 items-center justify-start px-8">
           <div className="border-[10px] border-[#0d274b] rounded-xl p-2 bg-white">
             <img
@@ -70,16 +87,13 @@ const SignUpForm = () => {
           </div>
         </div>
 
-        {/* Right Panel */}
         <div className="w-full xl:w-1/2 max-w-[540px] p-10 bg-white flex flex-col justify-center items-center mx-auto">
-          {/* Logo */}
           <img
             src={stoxLogo}
             alt="STOX Logo"
             className="w-[250px] h-[70px] object-contain mb-12 self-start"
           />
 
-          {/* Header Row */}
           <div className="flex items-center justify-between w-full max-w-[600px] mb-8 h-10 relative">
             <button
               type="button"
@@ -96,56 +110,51 @@ const SignUpForm = () => {
             </p>
           </div>
 
-          {/* Form */}
           <form
             onSubmit={handleSubmit}
             className="w-full max-w-[500px] flex flex-col items-stretch space-y-6"
           >
-            {[
-              {
-                id: "businessName",
-                label: "Business name",
-                placeholder: "Example business LLC",
-              },
-              {
-                id: "email",
-                label: "Email",
-                placeholder: "business@domain.com",
-              },
-              {
-                id: "businessNumber",
-                label: "Business number",
-                placeholder: "123456789",
-              },
-              {
-                id: "address",
-                label: "Address",
-                placeholder: "Prishtina",
-              },
-            ].map(({ id, label, placeholder }) => (
-              <div key={id} className="space-y-1">
-                <fieldset
-                  className={`border rounded-md px-3 pt-1 pb-2 ${
-                    errors[id] ? "border-red-500" : "border-gray-300"
-                  }`}
-                >
-                  <legend className="text-sm text-gray-600 px-1">{label}</legend>
-                  <input
-                    id={id}
-                    name={id}
-                    maxLength={id === "businessNumber" ? 9 : undefined}
-                    pattern={id === "businessNumber" ? "\\d*" : undefined}
-                    value={formData[id]}
-                    onChange={handleChange}
-                    placeholder={placeholder}
-                    className="w-full border-none outline-none text-gray-800 placeholder:text-gray-400 text-sm"
-                  />
-                </fieldset>
-                {errors[id] && (
-                  <p className="text-red-500 text-xs pl-1">{errors[id]}</p>
-                )}
-              </div>
-            ))}
+            {["businessName", "email", "businessNumber", "address"].map((id) => {
+              const labels = {
+                businessName: "Business name",
+                email: "Email",
+                businessNumber: "Business number",
+                address: "Address"
+              };
+              const placeholders = {
+                businessName: "Example business LLC",
+                email: "business@domain.com",
+                businessNumber: "123456789",
+                address: "Prishtina"
+              };
+              return (
+                <div key={id} className="space-y-1">
+                  <fieldset
+                    className={`border rounded-md px-3 pt-1 pb-2 ${
+                      errors[id] || (id === "email" && emailExists) ? "border-red-500" : "border-gray-300"
+                    }`}
+                  >
+                    <legend className="text-sm text-gray-600 px-1">{labels[id]}</legend>
+                    <input
+                      id={id}
+                      name={id}
+                      maxLength={id === "businessNumber" ? 9 : undefined}
+                      pattern={id === "businessNumber" ? "\\d*" : undefined}
+                      value={formData[id]}
+                      onChange={handleChange}
+                      placeholder={placeholders[id]}
+                      className="w-full border-none outline-none text-gray-800 placeholder:text-gray-400 text-sm"
+                    />
+                  </fieldset>
+                  {errors[id] && (
+                    <p className="text-red-500 text-xs pl-1">{errors[id]}</p>
+                  )}
+                  {id === "email" && emailExists && (
+                    <p className="text-red-500 text-xs pl-1">This email is already registered.</p>
+                  )}
+                </div>
+              );
+            })}
 
             <button
               type="submit"
@@ -155,9 +164,8 @@ const SignUpForm = () => {
             </button>
           </form>
 
-          {/* Login Link */}
           <p className="mt-5 text-sm text-center">
-            Already have an account?{" "}
+            Already have an account? {" "}
             <a href="/login" className="text-amber-500 font-medium hover:underline">
               Login
             </a>
