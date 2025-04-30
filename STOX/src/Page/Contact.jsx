@@ -8,6 +8,39 @@ import "../index.css";
 function Contact() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [formData, setFormData] = useState({ email: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("http://localhost:5064/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        alert(`Failed to submit: ${err}`);
+      } else {
+        alert("Message submitted successfully!");
+        setFormData({ email: "", message: "" });
+      }
+    } catch (error) {
+      console.error("Error submitting message:", error);
+      alert("An error occurred. Please try again.");
+    }
+
+    setSubmitting(false);
+  };
 
   return (
     <div className="flex flex-col min-h-screen text-[#112D4E]">
@@ -43,48 +76,50 @@ function Contact() {
         )}
       </div>
 
-      {/* Form & Illustration Side by Side */}
+      {/* Form & Illustration */}
       <div className="flex flex-col md:flex-row items-center justify-start md:justify-center gap-12 px-6 py-12 flex-1">
-        {/* Illustration (left) */}
         <div className="w-full md:w-1/2 flex items-center justify-center">
           <div className="border-[10px] border-[#0d274b] rounded-xl p-2 bg-white hidden md:block">
-            <img
-              src={illustration}
-              alt="Illustration"
-              className="w-full h-auto rounded-lg"
-            />
+            <img src={illustration} alt="Illustration" className="w-full h-auto rounded-lg" />
           </div>
         </div>
 
-        {/* Contact Form (right) */}
+        {/* Contact Form */}
         <div className="w-full md:w-1/2 max-w-md">
           <h1 className="text-3xl font-semibold text-[#112D4E] mb-6">Contact Us</h1>
-          <form className="space-y-6">
-            {/* Email */}
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
               <legend className="text-sm text-gray-600 px-1">Email</legend>
               <input
                 type="email"
+                name="email"
                 placeholder="business@domain.com"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full border-none outline-none text-gray-800"
+                required
               />
             </fieldset>
 
-            {/* Message */}
             <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
               <legend className="text-sm text-gray-600 px-1">Message</legend>
               <textarea
+                name="message"
                 rows="4"
                 placeholder="Your message here..."
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full border-none outline-none resize-none text-gray-800"
+                required
               ></textarea>
             </fieldset>
 
-            {/* Submit */}
             <button
               type="submit"
-              className="w-full bg-[#112D4E] text-white font-medium py-2 rounded-md hover:bg-[#0e2442] transition duration-300">
-              Submit
+              disabled={submitting}
+              className="w-full bg-[#112D4E] text-white font-medium py-2 rounded-md hover:bg-[#0e2442] transition duration-300"
+            >
+              {submitting ? "Sending..." : "Submit"}
             </button>
           </form>
         </div>
