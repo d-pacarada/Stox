@@ -31,7 +31,7 @@ function SidebarUser() {
               <img src={chartImg} alt="" />
               <h3>Overview</h3>
             </Link>
-            <Link to="/products" className={linkClass("/products")}>
+            <Link to="/Product" className={linkClass("/Product")}>
               <img src={iconproduct} alt="" />
               <h3 className='ml-1.5'>Products</h3>
             </Link>

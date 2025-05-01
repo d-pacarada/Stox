@@ -6,11 +6,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add DbContext
+// Add DbContext (MySQL)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
                      new MySqlServerVersion(new Version(8, 0, 23))));
@@ -26,7 +26,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ✅ ✅ ✅ ADD JWT Authentication
+// ✅ Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -47,18 +47,17 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Swagger (development only)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Add Middlewares
 app.UseCors("AllowFrontend");
-
-// ✅ Add this before UseAuthorization
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // ✅ Authentication first
+app.UseAuthorization();  // ✅ Then Authorization
 
 app.MapControllers();
 
