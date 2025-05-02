@@ -9,4 +9,8 @@ public class AppDbContext : DbContext
 public DbSet<Role> Role { get; set; }
 public DbSet<UserRole> UserRole { get; set; } 
 public DbSet<Contact> Contact { get; set; }
+public DbSet<Category> Category { get; set; }
+public DbSet<Product> Product { get; set; }
+
+
 }
