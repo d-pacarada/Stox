@@ -14,7 +14,7 @@ function See_Messages() {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch("http://localhost:5064/api/contacts"); 
+      const response = await fetch("http://localhost:5064/api/contacts");
       if (!response.ok) {
         throw new Error("Failed to fetch messages");
       }
@@ -34,9 +34,9 @@ function See_Messages() {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5064/api/contacts/${deleteId}`, 
-        { method: "DELETE" })
-
+      const response = await fetch(`http://localhost:5064/api/contacts/${deleteId}`, {
+        method: "DELETE"
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete message");
@@ -52,11 +52,12 @@ function See_Messages() {
   };
 
   return (
-    <div className='flex flex-col md:flex-row'>
+    <div className="flex flex-col min-h-screen md:flex-row">
       <SidebarAdmin />
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
         <Header />
-        <div className='p-8'>
+
+        <div className="p-8 flex-1">
           {loading ? (
             <p>Loading messages...</p>
           ) : messages.length === 0 ? (
@@ -95,6 +96,13 @@ function See_Messages() {
             </div>
           )}
         </div>
+
+        {/* Footer - Total Messages */}
+        {!loading && (
+          <div className="bg-[#112D4E] text-white p-2 rounded-md flex justify-center text-lg font-semibold mt-auto md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
+            <p>Total Messages: {messages.length}</p>
+          </div>
+        )}
 
         {/* Delete Confirm Popup */}
         {showConfirm && (
