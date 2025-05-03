@@ -103,95 +103,90 @@ function EditProduct() {
   };
 
   return (
-    <div className='flex flex-col md:flex-row min-h-screen'>
-      <SidebarUser />
-      <div className="flex-1 p-8">
-        <Header />
-        <h2 className="text-2xl font-semibold text-[#112D4E] mb-8">Edit Product</h2>
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Product Name */}
-          <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
-            <legend className="text-sm text-gray-600 px-1">Product Name</legend>
-            <input
-              type="text"
-              name="productName"
-              value={formData.productName}
-              onChange={handleChange}
-              className="w-full border-none outline-none text-gray-800"
-              required
-            />
-          </fieldset>
-
-          {/* Description */}
-          <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
-            <legend className="text-sm text-gray-600 px-1">Description</legend>
-            <input
-              type="text"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full border-none outline-none text-gray-800"
-              required
-            />
-          </fieldset>
-
-          {/* Category */}
-          <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
-            <legend className="text-sm text-gray-600 px-1">Category</legend>
-            <select
-              name="categoryId"
-              value={formData.categoryId}
-              onChange={handleChange}
-              className="w-full border-none outline-none text-gray-800"
-              required
-            >
-              <option value="">Select category</option>
-              {categories.map(cat => (
-                <option key={cat.category_ID} value={cat.category_ID}>
-                  {cat.category_Name}
-                </option>
-              ))}
-            </select>
-          </fieldset>
-
-          {/* Stock Quantity */}
-          <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
-            <legend className="text-sm text-gray-600 px-1">Stock Quantity</legend>
-            <input
-              type="number"
-              name="stockQuantity"
-              value={formData.stockQuantity}
-              onChange={handleChange}
-              className="w-full border-none outline-none text-gray-800"
-              required
-            />
-          </fieldset>
-
-          {/* Price */}
-          <fieldset className="border border-gray-300 rounded-md px-3 pt-1 pb-2">
-            <legend className="text-sm text-gray-600 px-1">Price</legend>
-            <input
-              type="number"
-              step="0.01"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              className="w-full border-none outline-none text-gray-800"
-              required
-            />
-          </fieldset>
-
-          {/* Submit Button */}
+    <div className="flex flex-col min-h-screen md:flex-row">
+    <SidebarUser />
+    <div className="flex-1 p-4 md:p-8 flex flex-col">
+      <Header />
+  
+      <div className="p-10 max-w-lg mx-auto mt-10">
+        <h1 className="text-2xl font-semibold mb-6 text-center underline">Edit Product</h1>
+        
+        <button
+          type="button"
+          className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors bg-transparent border-none outline-none font-outfit cursor-pointer mb-5"
+          onClick={() => navigate(-1)}
+        >
+          &lt;&lt; Back
+        </button>
+  
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="productName"
+            placeholder="Product Name"
+            value={formData.productName}
+            onChange={handleChange}
+            className="border p-2 w-full"
+            required
+          />
+  
+          <input
+            type="text"
+            name="description"
+            placeholder="Description"
+            value={formData.description}
+            onChange={handleChange}
+            className="border p-2 w-full"
+            required
+          />
+  
+          <select
+            name="categoryId"
+            value={formData.categoryId}
+            onChange={handleChange}
+            className="border p-2 w-full"
+            required
+          >
+            <option value="">-- Select Category --</option>
+            {categories.map(cat => (
+              <option key={cat.category_ID} value={cat.category_ID}>
+                {cat.category_Name}
+              </option>
+            ))}
+          </select>
+  
+          <input
+            type="number"
+            name="stockQuantity"
+            placeholder="Stock Quantity"
+            value={formData.stockQuantity}
+            onChange={handleChange}
+            className="border p-2 w-full"
+            required
+          />
+  
+          <input
+            type="number"
+            step="0.01"
+            name="price"
+            placeholder="Price"
+            value={formData.price}
+            onChange={handleChange}
+            className="border p-2 w-full"
+            required
+          />
+  
           <button
             type="submit"
-            className="w-full bg-[#112D4E] text-white py-3 rounded-md hover:bg-[#0b213f] transition duration-300"
+            className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full"
           >
             Save Changes
           </button>
         </form>
       </div>
     </div>
+  </div>
+  
   );
 }
 
