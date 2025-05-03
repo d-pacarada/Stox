@@ -13,6 +13,9 @@ function SidebarUser() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
+  // Kullanıcının rolünü çek
+  const role = localStorage.getItem("role");
+
   const linkClass = (path) =>
     `flex items-center gap-3 cursor-pointer ${location.pathname === path ? 'text-amber-500' : 'text-white'}`;
 
@@ -43,6 +46,14 @@ function SidebarUser() {
               <img src={user} alt="" />
               <h3>Customers</h3>
             </Link>
+
+            {/* Admin özel link */}
+            {role === "Admin" && (
+              <Link to="/AdminDashboard" className={linkClass("/AdminDashboard")}>
+                <img src={shape} alt="" />
+                <h3>Admin Panel</h3>
+              </Link>
+            )}
           </div>
         </div>
         <div className='flex flex-col gap-6 m-5'>
@@ -76,6 +87,12 @@ function SidebarUser() {
           <Link to="/Product" className={mobileLinkClass("/Product")}>Products</Link>
           <Link to="/orders" className={mobileLinkClass("/orders")}>Sales</Link>
           <Link to="/customers" className={mobileLinkClass("/customers")}>Customers</Link>
+
+          {/* Admin özel mobil link */}
+          {role === "Admin" && (
+            <Link to="/AdminDashboard" className={mobileLinkClass("/AdminDashboard")}>Admin Panel</Link>
+          )}
+
           <Link to="/messages" className={mobileLinkClass("/messages")}>Contact Us</Link>
           <Link to="/settings" className={mobileLinkClass("/settings")}>Settings</Link>
           <Link to="/logout" className={mobileLinkClass("/logout")}>Logout</Link>
