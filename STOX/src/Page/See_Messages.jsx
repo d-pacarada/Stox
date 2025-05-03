@@ -62,7 +62,7 @@ function See_Messages() {
           ) : messages.length === 0 ? (
             <p>No messages found.</p>
           ) : (
-            <div className="overflow-x-auto md:ml-10 md:mr-10 lg:ml-15 lg:mr-15">
+            <div className="overflow-x-auto md:ml-10 md:mr-10 lg:ml-7 lg:mr-7">
               <table className="min-w-full border-collapse border border-gray-300">
                 <thead className="bg-[#112D4E] text-white">
                   <tr>
