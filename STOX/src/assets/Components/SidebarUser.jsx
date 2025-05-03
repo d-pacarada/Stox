@@ -73,7 +73,7 @@ function SidebarUser() {
       {isOpen && (
         <div className="md:hidden bg-[#112D4E] flex flex-col gap-4 p-4">
           <Link to="/UserDashboard" className={mobileLinkClass("/UserDashboard")}>Overview</Link>
-          <Link to="/products" className={mobileLinkClass("/products")}>Products</Link>
+          <Link to="/Product" className={mobileLinkClass("/Product")}>Products</Link>
           <Link to="/orders" className={mobileLinkClass("/orders")}>Sales</Link>
           <Link to="/customers" className={mobileLinkClass("/customers")}>Customers</Link>
           <Link to="/messages" className={mobileLinkClass("/messages")}>Contact Us</Link>

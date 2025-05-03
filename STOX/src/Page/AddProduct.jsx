@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import Header from "../assets/Components/Header";
+import SidebarUser from '../assets/Components/SidebarUser';
+import { useNavigate } from "react-router-dom";
+ 
+
+
+
 
 export default function AddProduct() {
   const [formData, setFormData] = useState({
@@ -77,7 +84,7 @@ export default function AddProduct() {
       if (!response.ok) throw new Error(resultText);
 
       alert('Product added successfully!');
-
+      window.location.href = "/Product";
       // Reset form
       setFormData({
         productName: '',
@@ -92,9 +99,24 @@ export default function AddProduct() {
     }
   };
 
+  const navigate = useNavigate();
+
+
   return (
-    <div className="p-10 max-w-lg mx-auto">
-      <h1 className="text-2xl font-semibold mb-6">Add Product</h1>
+    <div className="flex flex-col min-h-screen md:flex-row">
+  <SidebarUser />
+  <div className="flex-1 p-4 md:p-8 flex flex-col">
+    <Header />
+    
+    
+    <div className="p-10 max-w-lg mx-auto mt-10">
+      <h1 className="text-2xl font-semibold mb-6 text-center underline">Add Product</h1>
+      <button type="button"
+        className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors bg-transparent border-none outline-none font-outfit cursor-pointer mb-5"
+        onClick={() => navigate(-1)}
+        > &lt;&lt; Back
+      </button>
+      
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <input
@@ -160,6 +182,8 @@ export default function AddProduct() {
           Add Product
         </button>
       </form>
+    </div>
+    </div>
     </div>
   );
 }
