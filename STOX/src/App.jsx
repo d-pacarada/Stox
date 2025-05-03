@@ -10,6 +10,7 @@ import AdminDashboard from './Page/AdminDashboard';
 import Product from './Page/Product';
 import AddProduct from './Page/AddProduct';
 import EditProduct from './Page/EditProduct';
+import See_Messages from './Page/See_Messages';
 import SidebarUser from './assets/Components/SidebarUser';
 import SidebarAdmin from './assets/Components/SidebarAdmin';
 
@@ -26,6 +27,7 @@ function App() {
       <Route path="/UserDashboard" element={<UserDashboard />} />
       <Route path="/AdminDashboard" element={<AdminDashboard />} />
       <Route path="/Product" element={<Product />} />
+      <Route path="/See_Messages" element={<See_Messages />} />
       <Route path="/AddProduct" element={<AddProduct />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />
       <Route path="/SidebarAdmin" element={<SidebarAdmin />} />

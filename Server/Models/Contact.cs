@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Models
+namespace Server.Models  // <= BU ÇOK ÖNEMLİ!
 {
     public class Contact
     {
@@ -9,12 +9,11 @@ namespace Server.Models
         public int Contact_ID { get; set; }
 
         [Required]
-        [EmailAddress]
+        [MaxLength(100)]
         public string Email { get; set; }
 
-        [Required]
         public string Message { get; set; }
 
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; }
     }
 }

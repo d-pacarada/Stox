@@ -76,7 +76,7 @@ function ProductList() {
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
   <SidebarUser />
-  <div className="flex-1 p-4 md:p-8 flex flex-col">
+  <div className="flex-1 p-4 md:p-0 flex flex-col">
     <Header />
 
     {/* Search and Controls */}
@@ -160,7 +160,7 @@ function ProductList() {
     </div>
 
     {/* Footer Bar */}
-    <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15">
+    <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
       <p>Product Number: {totalProducts}</p>
       <p>Total Stock Quantity: {totalStock}</p>
       <p>Total Price: {totalPrice}€</p>
