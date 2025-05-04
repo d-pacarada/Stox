@@ -41,9 +41,11 @@ CREATE TABLE Product (
     Product_Name VARCHAR(100),
     Description TEXT,
     Category_ID INT,
+    User_ID INT,
     Stock_Quantity INT,
     Price DECIMAL(10,2),
-    FOREIGN KEY (Category_ID) REFERENCES Category(Category_ID)
+    FOREIGN KEY (Category_ID) REFERENCES Category(Category_ID),
+    FOREIGN KEY (User_ID) REFERENCES User(User_ID)
 );
 
 -- CUSTOMER TABLE

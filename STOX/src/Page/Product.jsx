@@ -17,7 +17,13 @@ function ProductList() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5064/api/product");
+      const token = localStorage.getItem("token");
+
+const response = await fetch("http://localhost:5064/api/product/user", {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+});
       if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setProducts(data);
