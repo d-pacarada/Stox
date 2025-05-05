@@ -19,11 +19,11 @@ function ProductList() {
     try {
       const token = localStorage.getItem("token");
 
-const response = await fetch("http://localhost:5064/api/product/user", {
-    headers: {
-        Authorization: `Bearer ${token}`
-    }
-});
+      const response = await fetch("http://localhost:5064/api/product/user", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setProducts(data);
@@ -143,9 +143,9 @@ const response = await fetch("http://localhost:5064/api/product/user", {
               </tr>
             </thead>
             <tbody>
-              {sortedProducts.map((product) => (
+              {sortedProducts.map((product, index) => (
                 <tr key={product.product_ID} className="text-center border-b">
-                  <td className="p-3">{product.product_ID}</td>
+                  <td className="p-3">{index + 1}</td>
                   <td className="p-3">{product.product_Name}</td>
                   <td className="p-3">{product.description}</td>
                   <td className="p-3">{product.category_Name}</td>
