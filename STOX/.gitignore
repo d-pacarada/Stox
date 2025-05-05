@@ -39,3 +39,7 @@ obj/
 *.user
 *.vs/
 .vscode/
+
+bin/
+obj/
+
