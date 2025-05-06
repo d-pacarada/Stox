@@ -109,7 +109,7 @@ function Customer() {
         <Header />
 
         {/* Search and Controls */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 md:ml-10 md:mr-10">
+        <div className="flex flex-col mt-4 md:mt-0 md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 lg:mt-5 md:mt-5">
           <input
             type="text"
             placeholder="Search customers"
@@ -118,10 +118,10 @@ function Customer() {
             className="border px-4 py-2 rounded-md w-full md:w-40"
           />
 
-          <div className="flex space-x-4 items-center">
-            <select
+            <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center w-full md:w-auto">
+              <select
               onChange={handleSortChange}
-              className="border px-4 py-2 rounded-md"
+              className="border px-4 py-2 rounded-md w-full md:w-auto"
             >
               <option value="full_Name-asc">Name (A-Z)</option>
               <option value="full_Name-desc">Name (Z-A)</option>
@@ -135,7 +135,7 @@ function Customer() {
 
             <Link
               to="/AddCustomer"
-              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f]"
+              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full md:w-auto text-center"
             >
               Add Customer
             </Link>
@@ -143,7 +143,7 @@ function Customer() {
         </div>
 
         {/* Customer Table */}
-        <div className="overflow-x-auto flex-grow md:ml-10 md:mr-10">
+        <div className="overflow-x-auto flex-grow md:ml-15 md:mr-15 lg:ml-15 lg:mr-15">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead className="bg-[#112D4E] text-white">
               <tr>
