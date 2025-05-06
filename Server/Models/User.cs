@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Server.Models;
 
 public class User
 {
@@ -13,4 +14,6 @@ public class User
     public string Transit_Number { get; set; }
     public string Password { get; set; }
     public DateTime DATE { get; set; }
+    public ICollection<Customer> Customers { get; set; }
+
 }

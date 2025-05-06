@@ -42,7 +42,7 @@ function SidebarUser() {
               <img src={shoppingcart} alt="" />
               <h3>Sales</h3>
             </Link>
-            <Link to="/customers" className={linkClass("/customers")}>
+            <Link to="/Customer" className={linkClass("/Customer")}>
               <img src={user} alt="" />
               <h3>Customers</h3>
             </Link>
@@ -86,7 +86,7 @@ function SidebarUser() {
           <Link to="/UserDashboard" className={mobileLinkClass("/UserDashboard")}>Overview</Link>
           <Link to="/Product" className={mobileLinkClass("/Product")}>Products</Link>
           <Link to="/orders" className={mobileLinkClass("/orders")}>Sales</Link>
-          <Link to="/customers" className={mobileLinkClass("/customers")}>Customers</Link>
+          <Link to="/Customer" className={mobileLinkClass("/Customer")}>Customers</Link>
 
           {/* Admin özel mobil link */}
           {role === "Admin" && (

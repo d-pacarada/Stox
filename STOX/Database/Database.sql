@@ -51,11 +51,14 @@ CREATE TABLE Product (
 -- CUSTOMER TABLE
 CREATE TABLE Customer (
     Customer_ID INT PRIMARY KEY AUTO_INCREMENT,
-    Full_Name VARCHAR(100),
-    Email VARCHAR(100),
-    Phone_Number VARCHAR(20),
-    Address TEXT
+    Full_Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(255) NOT NULL,
+    Phone_Number VARCHAR(50) NOT NULL,
+    Address TEXT NOT NULL,
+    User_ID INT,
+    CONSTRAINT FK_Customer_User FOREIGN KEY (User_ID) REFERENCES User(User_ID) ON DELETE CASCADE
 );
+
 
 -- SALES INVOICE TABLE 
 CREATE TABLE Invoice (

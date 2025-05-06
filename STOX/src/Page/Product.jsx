@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("ID-Ascending");
+  const [sortOption, setSortOption] = useState("localId-Ascending");
   const [deleteId, setDeleteId] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
@@ -24,12 +24,28 @@ function ProductList() {
           Authorization: `Bearer ${token}`
         }
       });
+
       if (!response.ok) throw new Error("Failed to fetch products");
+
       const data = await response.json();
-      setProducts(data);
+
+      // Add localId
+      const productsWithLocalId = data.map((product, index) => ({
+        ...product,
+        localId: index + 1
+      }));
+
+      setProducts(productsWithLocalId);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
+  };
+
+  const updateLocalIds = (productList) => {
+    return productList.map((product, index) => ({
+      ...product,
+      localId: index + 1
+    }));
   };
 
   const confirmDelete = (productId) => {
@@ -45,7 +61,10 @@ function ProductList() {
 
       if (!response.ok) throw new Error("Failed to delete product");
 
-      setProducts(prev => prev.filter(p => p.product_ID !== deleteId));
+      const updatedProducts = products.filter(p => p.product_ID !== deleteId);
+      const updatedWithLocalIds = updateLocalIds(updatedProducts);
+
+      setProducts(updatedWithLocalIds);
       setShowConfirm(false);
       setDeleteId(null);
     } catch (error) {
@@ -64,21 +83,27 @@ function ProductList() {
 
   const [sortField, sortOrder] = sortOption.split("-");
 
-  const sortedProducts = [...products]
+  const filteredProducts = products
     .filter(product =>
       product.product_Name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      let aValue = a[sortField.toLowerCase()] ?? "";
-      let bValue = b[sortField.toLowerCase()] ?? "";
+      let aValue = a[sortField] ?? "";
+      let bValue = b[sortField] ?? "";
 
-      if (sortField === "Price" || sortField === "Stock_Quantity" || sortField === "ID") {
+      // Convert to lower case for string fields
+      if (typeof aValue === "string") aValue = aValue.toLowerCase();
+      if (typeof bValue === "string") bValue = bValue.toLowerCase();
+
+      // Convert to number for numeric fields
+      if (["localId", "stock_Quantity", "price"].includes(sortField)) {
         aValue = parseFloat(aValue);
         bValue = parseFloat(bValue);
       }
 
-      if (sortOrder === "Ascending") return aValue > bValue ? 1 : -1;
-      else return aValue < bValue ? 1 : -1;
+      if (aValue < bValue) return sortOrder === "Ascending" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "Ascending" ? 1 : -1;
+      return 0;
     });
 
   const totalProducts = products.length;
@@ -107,12 +132,12 @@ function ProductList() {
               onChange={handleSortChange}
               className="border px-4 py-2 rounded-md w-full md:w-auto"
             >
-              <option value="ID-Ascending">ID (Ascending)</option>
-              <option value="ID-Descending">ID (Descending)</option>
+              <option value="localId-Ascending">ID (Ascending)</option>
+              <option value="localId-Descending">ID (Descending)</option>
               <option value="product_Name-Ascending">Name (A-Z)</option>
               <option value="product_Name-Descending">Name (Z-A)</option>
-              <option value="categoryName-Ascending">Category (A-Z)</option>
-              <option value="categoryName-Descending">Category (Z-A)</option>
+              <option value="category_Name-Ascending">Category (A-Z)</option>
+              <option value="category_Name-Descending">Category (Z-A)</option>
               <option value="stock_Quantity-Ascending">Stock (Low to High)</option>
               <option value="stock_Quantity-Descending">Stock (High to Low)</option>
               <option value="price-Ascending">Price (Low to High)</option>
@@ -143,9 +168,9 @@ function ProductList() {
               </tr>
             </thead>
             <tbody>
-              {sortedProducts.map((product, index) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.product_ID} className="text-center border-b">
-                  <td className="p-3">{index + 1}</td>
+                  <td className="p-3">{product.localId}</td>
                   <td className="p-3">{product.product_Name}</td>
                   <td className="p-3">{product.description}</td>
                   <td className="p-3">{product.category_Name}</td>
