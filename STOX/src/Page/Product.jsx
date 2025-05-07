@@ -11,6 +11,9 @@ function ProductList() {
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -75,6 +78,7 @@ function ProductList() {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); 
   };
 
   const handleSortChange = (e) => {
@@ -91,11 +95,9 @@ function ProductList() {
       let aValue = a[sortField] ?? "";
       let bValue = b[sortField] ?? "";
 
-      // Convert to lower case for string fields
       if (typeof aValue === "string") aValue = aValue.toLowerCase();
       if (typeof bValue === "string") bValue = bValue.toLowerCase();
 
-      // Convert to number for numeric fields
       if (["localId", "stock_Quantity", "price"].includes(sortField)) {
         aValue = parseFloat(aValue);
         bValue = parseFloat(bValue);
@@ -105,6 +107,12 @@ function ProductList() {
       if (aValue > bValue) return sortOrder === "Ascending" ? 1 : -1;
       return 0;
     });
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalProducts = products.length;
   const totalStock = products.reduce((acc, product) => acc + product.stock_Quantity, 0);
@@ -168,7 +176,7 @@ function ProductList() {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((product) => (
+              {currentProducts.map((product) => (
                 <tr key={product.product_ID} className="text-center border-b">
                   <td className="p-3">{product.localId}</td>
                   <td className="p-3">{product.product_Name}</td>
@@ -194,6 +202,25 @@ function ProductList() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center items-center space-x-4 mt-6">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+          >
+            Previous
+          </button>
+          <p className="text-s">Page {currentPage} of {totalPages}</p>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+          >
+            Next
+          </button>
         </div>
 
         {/* Footer Bar */}

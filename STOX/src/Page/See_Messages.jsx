@@ -8,6 +8,9 @@ function See_Messages() {
   const [deleteId, setDeleteId] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; 
+
   useEffect(() => {
     fetchMessages();
   }, []);
@@ -42,7 +45,8 @@ function See_Messages() {
         throw new Error("Failed to delete message");
       }
 
-      setMessages(messages.filter(msg => msg.contact_ID !== deleteId));
+      const updatedMessages = messages.filter(msg => msg.contact_ID !== deleteId);
+      setMessages(updatedMessages);
     } catch (error) {
       console.error("Error deleting message:", error);
     } finally {
@@ -50,6 +54,12 @@ function See_Messages() {
       setDeleteId(null);
     }
   };
+
+  // Pagination Logic
+  const totalPages = Math.ceil(messages.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMessages = messages.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
@@ -75,7 +85,7 @@ function See_Messages() {
                   </tr>
                 </thead>
                 <tbody>
-                  {messages.map((msg) => (
+                  {currentMessages.map((msg) => (
                     <tr key={msg.contact_ID} className="text-center border-b">
                       <td className="p-3">{msg.contact_ID}</td>
                       <td className="p-3">{msg.email}</td>
@@ -96,6 +106,27 @@ function See_Messages() {
             </div>
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {!loading && messages.length > 0 && (
+          <div className="flex justify-center items-center space-x-4 mt-6 mb-8">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+            >
+              Previous
+            </button>
+            <p className="text-sm">Page {currentPage} of {totalPages}</p>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
         {/* Footer - Total Messages */}
         {!loading && (

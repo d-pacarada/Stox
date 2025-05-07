@@ -10,6 +10,8 @@ function Customer() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [sortField, setSortField] = useState("full_Name");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const navigate = useNavigate();
 
@@ -32,7 +34,6 @@ function Customer() {
 
       const data = await response.json();
 
-      // Add localId to each customer
       const customersWithLocalId = data.map((customer, index) => ({
         ...customer,
         localId: index + 1
@@ -100,6 +101,12 @@ function Customer() {
       return 0;
     });
 
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCustomers = filteredCustomers.slice(indexOfFirstItem, indexOfLastItem);
+
   const totalCustomers = customers.length;
 
   return (
@@ -108,18 +115,20 @@ function Customer() {
       <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
 
-        {/* Search and Controls */}
         <div className="flex flex-col mt-4 md:mt-0 md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 lg:mt-5 md:mt-5">
           <input
             type="text"
             placeholder="Search customers"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); 
+            }}
             className="border px-4 py-2 rounded-md w-full md:w-40"
           />
 
-            <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center w-full md:w-auto">
-              <select
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center w-full md:w-auto">
+            <select
               onChange={handleSortChange}
               className="border px-4 py-2 rounded-md w-full md:w-auto"
             >
@@ -142,7 +151,6 @@ function Customer() {
           </div>
         </div>
 
-        {/* Customer Table */}
         <div className="overflow-x-auto flex-grow md:ml-15 md:mr-15 lg:ml-15 lg:mr-15">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead className="bg-[#112D4E] text-white">
@@ -156,7 +164,7 @@ function Customer() {
               </tr>
             </thead>
             <tbody>
-              {filteredCustomers.map((customer) => (
+              {currentCustomers.map((customer) => (
                 <tr key={customer.customer_ID} className="text-center border-b">
                   <td className="p-3">{customer.localId}</td>
                   <td className="p-3">{customer.full_Name}</td>
@@ -183,12 +191,29 @@ function Customer() {
           </table>
         </div>
 
-        {/* Footer Bar */}
+        {/* Pagination Controls */}
+        <div className="flex justify-center items-center space-x-4 mt-6">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+          >
+            Previous
+          </button>
+          <p className="text-sm">Page {currentPage} of {totalPages}</p>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+          >
+            Next
+          </button>
+        </div>
+
         <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-center items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 md:mb-8">
           <p>Total Customers: {totalCustomers}</p>
         </div>
 
-        {/* Delete Confirm Popup */}
         {showConfirm && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
@@ -217,4 +242,3 @@ function Customer() {
 }
 
 export default Customer;
-    
