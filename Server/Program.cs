@@ -26,7 +26,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ✅ Add JWT Authentication
+//Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,22 +42,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add Controllers
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Swagger (development only)
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Add Middlewares
+
 app.UseCors("AllowFrontend");
-app.UseAuthentication(); // ✅ Authentication first
-app.UseAuthorization();  // ✅ Then Authorization
+app.UseAuthentication(); 
+app.UseAuthorization();  
 
 app.MapControllers();
 

@@ -31,7 +31,7 @@ function SidebarUser() {
               <img src={chartImg} alt="" />
               <h3>Overview</h3>
             </Link>
-            <Link to="/Users" className={linkClass("/Users")}>
+            <Link to="/See_Users" className={linkClass("/See_Users")}>
               <img src={user} alt="" />
               <h3>Users</h3>
             </Link>
@@ -69,7 +69,7 @@ function SidebarUser() {
       {isOpen && (
         <div className="md:hidden bg-[#112D4E] flex flex-col gap-4 p-4">
           <Link to="/AdminDashboard" className={mobileLinkClass("/AdminDashboard")}>Overview</Link>
-          <Link to="/Users" className={mobileLinkClass("/Users")}>Users</Link>
+          <Link to="/See_Users" className={mobileLinkClass("/See_Users")}>Users</Link>
           <Link to="/See_Messages" className={mobileLinkClass("/See_Messages")}>See Messages</Link>
           <Link to="/settings" className={mobileLinkClass("/settings")}>Settings</Link>
           <Link to="/logout" className={mobileLinkClass("/logout")}>Logout</Link>

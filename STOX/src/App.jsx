@@ -14,6 +14,7 @@ import AddCustomer from './Page/AddCustomer';
 import EditProduct from './Page/EditProduct';
 import EditCustomer from './Page/EditCustomer';
 import See_Messages from './Page/See_Messages';
+import See_Users from './Page/See_Users';
 import SettingsPage from './Page/SettingsPage';
 import SidebarUser from './assets/Components/SidebarUser';
 import SidebarAdmin from './assets/Components/SidebarAdmin';
@@ -33,6 +34,7 @@ function App() {
       <Route path="/Product" element={<Product />} />
       <Route path="/Customer" element={<Customer />} />
       <Route path="/See_Messages" element={<See_Messages />} />
+      <Route path="/See_Users" element={<See_Users />} />
       <Route path="/AddProduct" element={<AddProduct />} />
       <Route path="/AddCustomer" element={<AddCustomer />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />

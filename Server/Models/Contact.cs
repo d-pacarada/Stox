@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Models  // <= BU ÇOK ÖNEMLİ!
+namespace Server.Models  
 {
     public class Contact
     {

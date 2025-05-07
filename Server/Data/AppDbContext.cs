@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Server.Controllers;
 using Server.Models;
 
 public class AppDbContext : DbContext
@@ -11,19 +12,18 @@ public class AppDbContext : DbContext
     public DbSet<Contact> Contact { get; set; }
     public DbSet<Category> Category { get; set; }
     public DbSet<Product> Product { get; set; }
-    public DbSet<Customer> Customer { get; set; } // ✅ Added Customers
+    public DbSet<Customer> Customer { get; set; } 
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure Customer -> User relationship
         modelBuilder.Entity<Customer>()
             .HasOne(c => c.User)
             .WithMany(u => u.Customers)
             .HasForeignKey(c => c.User_ID)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // (Optional) Configure other relationships here if needed
     }
 }
