@@ -15,21 +15,21 @@ function SettingsPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen md:flex-row">
 
       {/* Sidebar */}
-      <div className="hidden md:block">
+      <div className="w-auto md:block w-64">
         {role === "Admin" ? <SidebarAdmin /> : <SidebarUser />}
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 md:p-10 space-y-8">
+      <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
         
         <div>
-          <h1 className="text-3xl font-bold text-[#112D4E] mb-6">Settings</h1>
+          <h1 className="text-3xl font-bold text-[#112D4E] mb-6 mt-5 lg:mt-15 text-center underline">Settings</h1>
           
-          <div className="bg-white shadow-md rounded-lg p-6">
+          <div className="p-6 lg:mx-10 lg:mt-15">
             <SettingsComponent />
           </div>
         </div>

@@ -91,7 +91,7 @@ function SettingsComponent() {
 
       {/* Change Details */}
       <div>
-        <h2 className="text-2xl font-semibold text-[#112D4E] mb-6">Change Details</h2>
+        <h2 className="text-2xl font-semibold text-[#112D4E] mb-6 text-center">Change Details</h2>
 
         <div className="space-y-6">
           {["Address", "Phone Number", "Transit Number"].map((label) => {
@@ -122,7 +122,7 @@ function SettingsComponent() {
 
       {/* Change Password */}
       <div>
-        <h2 className="text-2xl font-semibold text-[#112D4E] mb-6">Change Password</h2>
+        <h2 className="text-2xl font-semibold text-[#112D4E] mb-6 text-center">Change Password</h2>
 
         <div className="space-y-6">
           {["currentPassword", "newPassword", "confirmPassword"].map((name) => {
