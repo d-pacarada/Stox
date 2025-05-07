@@ -61,7 +61,7 @@ function SidebarUser() {
             <img src={mail} alt="" />
             <h3>Contact Us</h3>
           </Link>
-          <Link to="/settings" className={linkClass("/settings")}>
+          <Link to="/SettingsPage" className={linkClass("/SettingsPage")}>
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>

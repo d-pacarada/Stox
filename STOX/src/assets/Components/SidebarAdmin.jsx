@@ -46,7 +46,7 @@ function SidebarUser() {
           </div>
         </div>
         <div className='flex flex-col gap-6 m-5'>
-          <Link to="/settings" className={linkClass("/settings")}>
+          <Link to="/SettingsPage" className={linkClass("/SettingsPage")}>
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>

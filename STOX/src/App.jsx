@@ -14,6 +14,7 @@ import AddCustomer from './Page/AddCustomer';
 import EditProduct from './Page/EditProduct';
 import EditCustomer from './Page/EditCustomer';
 import See_Messages from './Page/See_Messages';
+import SettingsPage from './Page/SettingsPage';
 import SidebarUser from './assets/Components/SidebarUser';
 import SidebarAdmin from './assets/Components/SidebarAdmin';
 
@@ -38,6 +39,7 @@ function App() {
       <Route path="/SidebarAdmin" element={<SidebarAdmin />} />
       <Route path="/EditProduct/:id" element={<EditProduct />} />
       <Route path="/EditCustomer/:id" element={<EditCustomer />} />
+      <Route path="/SettingsPage" element={<SettingsPage />} />
     </Routes>
   );
 }
