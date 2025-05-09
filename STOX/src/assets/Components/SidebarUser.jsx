@@ -65,7 +65,7 @@ function SidebarUser() {
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>
-          <Link to="/logout" className={linkClass("/logout")}>
+          <Link to="/Logout" className={linkClass("/Logout")}>
             <img src={logout} alt="" />
             <h3>Logout</h3>
           </Link>
@@ -95,7 +95,7 @@ function SidebarUser() {
 
           <Link to="/messages" className={mobileLinkClass("/messages")}>Contact Us</Link>
           <Link to="/settings" className={mobileLinkClass("/settings")}>Settings</Link>
-          <Link to="/logout" className={mobileLinkClass("/logout")}>Logout</Link>
+          <Link to="/Logout" className={mobileLinkClass("/Logout")}>Logout</Link>
         </div>
       )}
     </>

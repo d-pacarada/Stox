@@ -16,6 +16,7 @@ import EditCustomer from './Page/EditCustomer';
 import See_Messages from './Page/See_Messages';
 import See_Users from './Page/See_Users';
 import SettingsPage from './Page/SettingsPage';
+import Logout from './Page/Logout';
 import SidebarUser from './assets/Components/SidebarUser';
 import SidebarAdmin from './assets/Components/SidebarAdmin';
 
@@ -42,6 +43,7 @@ function App() {
       <Route path="/EditProduct/:id" element={<EditProduct />} />
       <Route path="/EditCustomer/:id" element={<EditCustomer />} />
       <Route path="/SettingsPage" element={<SettingsPage />} />
+      <Route path="/Logout" element={<Logout />} />
     </Routes>
   );
 }
