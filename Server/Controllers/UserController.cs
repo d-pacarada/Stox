@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore; // Needed for FirstOrDefaultAsync
 using Server.Data;
-using Server.Models;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -23,21 +23,26 @@ namespace Server.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserInfo()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
+            var userIdClaim = User.FindFirst("userId");
             if (userIdClaim == null)
-                return Unauthorized();
+                return Unauthorized("User ID not found in token.");
 
-            var userId = int.Parse(userIdClaim.Value);
-            var user = await _context.User.FindAsync(userId);
+            int userId = int.Parse(userIdClaim.Value);
+
+            var user = await _context.User
+                .Where(u => u.User_ID == userId)
+                .Select(u => new
+                {
+                    Email = u.Email,
+                    BusinessName = u.Business_Name,
+                    BusinessNumber = u.Business_Number
+                })
+                .FirstOrDefaultAsync();
 
             if (user == null)
-                return NotFound();
+                return NotFound("User not found.");
 
-            return Ok(new
-            {
-                businessName = user.Business_Name,
-                businessNumber = user.Business_Number
-            });
+            return Ok(user);
         }
     }
 }
