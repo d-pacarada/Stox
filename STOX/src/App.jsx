@@ -11,6 +11,7 @@ import Product from './Page/Product';
 import Customer from './Page/Customer';
 import AddProduct from './Page/AddProduct';
 import AddCustomer from './Page/AddCustomer';
+import AddSale from './Page/AddSale';
 import EditProduct from './Page/EditProduct';
 import EditCustomer from './Page/EditCustomer';
 import See_Messages from './Page/See_Messages';
@@ -40,6 +41,7 @@ function App() {
       <Route path="/See_Users" element={<See_Users />} />
       <Route path="/AddProduct" element={<AddProduct />} />
       <Route path="/AddCustomer" element={<AddCustomer />} />
+      <Route path="/AddSale" element={<AddSale />} />
       <Route path="/Sale" element={<Sale />} />
       <Route path="/Purchase" element={<Purchase />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />
