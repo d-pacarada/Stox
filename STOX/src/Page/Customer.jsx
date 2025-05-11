@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SidebarUser from '../assets/Components/SidebarUser';
 import Header from "../assets/Components/Header";
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,8 +14,13 @@ function Customer() {
   const itemsPerPage = 6;
 
   const navigate = useNavigate();
+  const localIdMapRef = useRef({});
 
   useEffect(() => {
+    const storedMap = localStorage.getItem("customerLocalIdMap");
+    if (storedMap) {
+      localIdMapRef.current = JSON.parse(storedMap);
+    }
     fetchCustomers();
   }, []);
 
@@ -34,22 +39,26 @@ function Customer() {
 
       const data = await response.json();
 
-      const customersWithLocalId = data.map((customer, index) => ({
+      // localId'leri sabit ata
+      let maxLocalId = Math.max(0, ...Object.values(localIdMapRef.current));
+      data.forEach((customer) => {
+        if (!localIdMapRef.current[customer.customer_ID]) {
+          localIdMapRef.current[customer.customer_ID] = ++maxLocalId;
+        }
+      });
+
+      // localStorage'e kaydet
+      localStorage.setItem("customerLocalIdMap", JSON.stringify(localIdMapRef.current));
+
+      const customersWithLocalId = data.map(customer => ({
         ...customer,
-        localId: index + 1
+        localId: localIdMapRef.current[customer.customer_ID]
       }));
 
       setCustomers(customersWithLocalId);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
-  };
-
-  const updateLocalIds = (customersList) => {
-    return customersList.map((customer, index) => ({
-      ...customer,
-      localId: index + 1
-    }));
   };
 
   const confirmDelete = (customerId) => {
@@ -71,9 +80,12 @@ function Customer() {
       if (!response.ok) throw new Error("Failed to delete customer");
 
       const updatedCustomers = customers.filter(c => c.customer_ID !== deleteId);
-      const updatedWithLocalIds = updateLocalIds(updatedCustomers);
 
-      setCustomers(updatedWithLocalIds);
+      // Map'ten sil ve localStorage güncelle
+      delete localIdMapRef.current[deleteId];
+      localStorage.setItem("customerLocalIdMap", JSON.stringify(localIdMapRef.current));
+
+      setCustomers(updatedCustomers);
       setShowConfirm(false);
       setDeleteId(null);
     } catch (error) {
@@ -101,12 +113,10 @@ function Customer() {
       return 0;
     });
 
-  // Pagination Logic
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentCustomers = filteredCustomers.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalCustomers = customers.length;
 
   return (
@@ -191,7 +201,6 @@ function Customer() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
         <div className="flex justify-center items-center space-x-4 mt-6">
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
