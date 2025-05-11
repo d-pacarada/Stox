@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SidebarUser from '../assets/Components/SidebarUser';
 import Header from "../assets/Components/Header";
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,7 +14,14 @@ function ProductList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  const localIdMapRef = useRef({});
+
+  // Yüklemede localStorage'den localId'leri getir
   useEffect(() => {
+    const storedMap = localStorage.getItem("localIdMap");
+    if (storedMap) {
+      localIdMapRef.current = JSON.parse(storedMap);
+    }
     fetchProducts();
   }, []);
 
@@ -32,11 +39,20 @@ function ProductList() {
 
       const data = await response.json();
 
-      // localId'yi sadece bir kez sırayla ata ve sabit tut
-      let counter = 1;
-      const productsWithLocalId = data.map((product) => ({
+      // Yeni ürünler için localId üret
+      let maxLocalId = Math.max(0, ...Object.values(localIdMapRef.current));
+      data.forEach((product) => {
+        if (!localIdMapRef.current[product.product_ID]) {
+          localIdMapRef.current[product.product_ID] = ++maxLocalId;
+        }
+      });
+
+      // Güncel map'i kaydet
+      localStorage.setItem("localIdMap", JSON.stringify(localIdMapRef.current));
+
+      const productsWithLocalId = data.map(product => ({
         ...product,
-        localId: counter++
+        localId: localIdMapRef.current[product.product_ID]
       }));
 
       setProducts(productsWithLocalId);
@@ -60,7 +76,11 @@ function ProductList() {
 
       const updatedProducts = products.filter(p => p.product_ID !== deleteId);
 
-      setProducts(updatedProducts); // localId'leri koru
+      // localIdMapRef içinden de sil
+      delete localIdMapRef.current[deleteId];
+      localStorage.setItem("localIdMap", JSON.stringify(localIdMapRef.current));
+
+      setProducts(updatedProducts);
       setShowConfirm(false);
       setDeleteId(null);
     } catch (error) {
@@ -116,7 +136,6 @@ function ProductList() {
       <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
 
-        {/* Search and Controls */}
         <div className="flex flex-col mt-4 md:mt-0 md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 lg:mt-5 md:mt-5">
           <input
             type="text"
@@ -223,7 +242,7 @@ function ProductList() {
         </div>
       </div>
 
-      {/* Delete Confirm Modal */}
+      {/* Delete Confirm Popup */}
       {showConfirm && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
