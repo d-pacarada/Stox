@@ -32,23 +32,17 @@ function ProductList() {
 
       const data = await response.json();
 
-      // Add localId
-      const productsWithLocalId = data.map((product, index) => ({
+      // localId'yi sadece bir kez sırayla ata ve sabit tut
+      let counter = 1;
+      const productsWithLocalId = data.map((product) => ({
         ...product,
-        localId: index + 1
+        localId: counter++
       }));
 
       setProducts(productsWithLocalId);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
-  };
-
-  const updateLocalIds = (productList) => {
-    return productList.map((product, index) => ({
-      ...product,
-      localId: index + 1
-    }));
   };
 
   const confirmDelete = (productId) => {
@@ -65,9 +59,8 @@ function ProductList() {
       if (!response.ok) throw new Error("Failed to delete product");
 
       const updatedProducts = products.filter(p => p.product_ID !== deleteId);
-      const updatedWithLocalIds = updateLocalIds(updatedProducts);
 
-      setProducts(updatedWithLocalIds);
+      setProducts(updatedProducts); // localId'leri koru
       setShowConfirm(false);
       setDeleteId(null);
     } catch (error) {
@@ -108,7 +101,6 @@ function ProductList() {
       return 0;
     });
 
-  // Pagination Logic
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -204,7 +196,7 @@ function ProductList() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         <div className="flex justify-center items-center space-x-4 mt-6">
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -223,7 +215,7 @@ function ProductList() {
           </button>
         </div>
 
-        {/* Footer Bar */}
+        {/* Summary */}
         <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
           <p>Product Number: {totalProducts}</p>
           <p>Total Stock Quantity: {totalStock}</p>
@@ -231,7 +223,7 @@ function ProductList() {
         </div>
       </div>
 
-      {/* Delete Confirm Popup */}
+      {/* Delete Confirm Modal */}
       {showConfirm && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
