@@ -4,23 +4,28 @@ import Header from "../assets/Components/Header";
 
 function See_Messages() {
   const [messages, setMessages] = useState([]);
+  const [filteredMessages, setFilteredMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const itemsPerPage = 6;
 
   useEffect(() => {
     fetchMessages();
   }, []);
 
+  useEffect(() => {
+    handleSearchAndSort();
+  }, [messages, searchTerm, sortOrder]);
+
   const fetchMessages = async () => {
     try {
       const response = await fetch("http://localhost:5064/api/contacts");
-      if (!response.ok) {
-        throw new Error("Failed to fetch messages");
-      }
+      if (!response.ok) throw new Error("Failed to fetch messages");
       const data = await response.json();
       setMessages(data);
     } catch (error) {
@@ -40,10 +45,7 @@ function See_Messages() {
       const response = await fetch(`http://localhost:5064/api/contacts/${deleteId}`, {
         method: "DELETE"
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete message");
-      }
+      if (!response.ok) throw new Error("Failed to delete message");
 
       const updatedMessages = messages.filter(msg => msg.contact_ID !== deleteId);
       setMessages(updatedMessages);
@@ -55,11 +57,34 @@ function See_Messages() {
     }
   };
 
+  const handleSearchAndSort = () => {
+    let filtered = [...messages];
+
+    // Filter
+    if (searchTerm.trim() !== "") {
+      filtered = filtered.filter(
+        (msg) =>
+          msg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          msg.message.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Sort
+    filtered.sort((a, b) =>
+      sortOrder === "asc"
+        ? a.contact_ID - b.contact_ID
+        : b.contact_ID - a.contact_ID
+    );
+
+    setFilteredMessages(filtered);
+    setCurrentPage(1); // Reset page on search/sort
+  };
+
   // Pagination Logic
-  const totalPages = Math.ceil(messages.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredMessages.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentMessages = messages.slice(indexOfFirstItem, indexOfLastItem);
+  const currentMessages = filteredMessages.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
@@ -68,12 +93,31 @@ function See_Messages() {
         <Header />
 
         <div className="p-8 flex-1">
+          {/* Search and Sort Controls */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 md:ml-10 md:mr-10">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border px-4 py-2 rounded w-full md:w-35"
+            />
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="border px-4 py-2 rounded"
+            >
+              <option value="asc">Sort by ID (Ascending)</option>
+              <option value="desc">Sort by ID (Descending)</option>
+            </select>
+          </div>
+
           {loading ? (
             <p>Loading messages...</p>
-          ) : messages.length === 0 ? (
+          ) : filteredMessages.length === 0 ? (
             <p>No messages found.</p>
           ) : (
-            <div className="overflow-x-auto md:ml-10 md:mr-10 lg:ml-7 lg:mr-7">
+            <div className="overflow-x-auto md:ml-10 md:mr-10">
               <table className="min-w-full border-collapse border border-gray-300">
                 <thead className="bg-[#112D4E] text-white">
                   <tr>
@@ -107,8 +151,8 @@ function See_Messages() {
           )}
         </div>
 
-        {/* Pagination Controls */}
-        {!loading && messages.length > 0 && (
+        {/* Pagination */}
+        {!loading && filteredMessages.length > 0 && (
           <div className="flex justify-center items-center space-x-4 mt-6 mb-8">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -128,14 +172,14 @@ function See_Messages() {
           </div>
         )}
 
-        {/* Footer - Total Messages */}
+        {/* Footer */}
         {!loading && (
-          <div className="bg-[#112D4E] text-white p-2 rounded-md flex justify-center text-lg font-semibold mt-auto md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
-            <p>Total Messages: {messages.length}</p>
+          <div className="bg-[#112D4E] text-white p-2 rounded-md flex justify-center text-lg font-semibold mt-auto md:ml-10 md:mr-10 md:mb-8">
+            <p>Total Messages: {filteredMessages.length}</p>
           </div>
         )}
 
-        {/* Delete Confirm Popup */}
+        {/* Confirm Delete Popup */}
         {showConfirm && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
