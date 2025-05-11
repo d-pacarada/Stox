@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from "../assets/Components/Header";
 import SidebarUser from '../assets/Components/SidebarUser';
 import { useNavigate } from "react-router-dom";
-import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable'; // <-- Changed import
 
 export default function AddProduct() {
   const [formData, setFormData] = useState({
@@ -51,7 +51,7 @@ export default function AddProduct() {
       return;
     }
 
-    const trimmedCategoryName = (selectedCategory || formData.newCategory || "").trim();
+    const trimmedCategoryName = (selectedCategory?.label || formData.newCategory || "").trim();
     if (!trimmedCategoryName) {
       alert('Please select or type a category');
       return;
@@ -110,7 +110,7 @@ export default function AddProduct() {
       if (!response.ok) throw new Error(resultText);
 
       alert('Product added successfully!');
-      window.location.href = "/Product";
+      navigate("/Product");
 
       setFormData({
         productName: '',
@@ -133,122 +133,36 @@ export default function AddProduct() {
         <Header />
         <div className="p-10 max-w-lg mx-auto mt-10">
           <h1 className="text-2xl font-semibold mb-6 text-center underline">Add Product</h1>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="text-sm font-medium text-gray-800 hover:text-amber-500 mb-5"
-          >
-            &lt;&lt; Back
-          </button>
+          <button type="button" onClick={() => navigate(-1)} className="text-sm font-medium text-gray-800 hover:text-amber-500 mb-5">&lt;&lt; Back</button>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="productName"
-              placeholder="Product Name"
-              value={formData.productName}
-              onChange={(e) => handleInputChange("productName", e.target.value)}
-              className="border p-2 w-full rounded-md"
-              required
+            <input type="text" name="productName" placeholder="Product Name" value={formData.productName} onChange={(e) => handleInputChange("productName", e.target.value)} className="border p-2 w-full rounded-md" required />
+
+            <input type="text" name="description" placeholder="Description" value={formData.description} onChange={(e) => handleInputChange("description", e.target.value)} className="border p-2 w-full rounded-md" required />
+
+            <CreatableSelect
+              options={categories.map(cat => ({ value: cat.category_ID, label: cat.category_Name }))}
+              onChange={(selected) => {
+                setSelectedCategory(selected);
+                handleInputChange("newCategory", selected?.label || '');
+              }}
+              onInputChange={(inputValue, actionMeta) => {
+                if (actionMeta.action === 'input-change') {
+                  setSelectedCategory({ label: inputValue, value: null });
+                  handleInputChange("newCategory", inputValue);
+                }
+              }}
+              value={selectedCategory}
+              placeholder="Start typing or select a category"
+              isClearable
+              isSearchable
             />
 
-            <input
-              type="text"
-              name="description"
-              placeholder="Description"
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              className="border p-2 w-full rounded-md"
-              required
-            />
+            <input type="number" name="stockQuantity" placeholder="Stock Quantity" value={formData.stockQuantity} onChange={(e) => handleInputChange("stockQuantity", e.target.value)} className="border p-2 w-full rounded-md" required />
 
-            <div>
-              <Select
-                options={categories.map(cat => ({
-                  value: cat.category_ID,
-                  label: cat.category_Name
-                }))}
-                onChange={(selected) => {
-                  setSelectedCategory(selected ? selected.label : '');
-                  handleInputChange("newCategory", selected ? selected.label : '');
-                }}
-                placeholder="Start typing or select a category"
-                isClearable
-                isSearchable
-                styles={{
-                  control: (base, state) => ({
-                    ...base,
-                    backgroundColor: '#fff',
-                    borderColor: '#000',
-                    boxShadow: state.isFocused ? '0 0 0 1px #000' : 'none',
-                    borderRadius: '0.375rem',
-                    padding: '2px 6px',
-                    fontSize: '1rem',
-                    minHeight: '2.5rem',
-                    cursor: 'text',
-                    '&:hover': {
-                      borderColor: '#000'
-                    }
-                  }),
-                  option: (base, state) => ({
-                    ...base,
-                    backgroundColor: state.isSelected
-                      ? '#2563eb'
-                      : state.isFocused
-                      ? '#eff6ff'
-                      : '#fff',
-                    color: state.isSelected ? '#fff' : '#111827',
-                    padding: '0.5rem 0.75rem'
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    borderRadius: '0.375rem',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    zIndex: 20
-                  }),
-                  placeholder: (base) => ({
-                    ...base,
-                    color: '#9ca3af'
-                  }),
-                  singleValue: (base) => ({
-                    ...base,
-                    color: '#111827'
-                  }),
-                  input: (base) => ({
-                    ...base,
-                    color: '#111827'
-                  })
-                }}
-              />
-            </div>
+            <input type="number" step="0.01" name="price" placeholder="Price" value={formData.price} onChange={(e) => handleInputChange("price", e.target.value)} className="border p-2 w-full rounded-md" required />
 
-            <input
-              type="number"
-              name="stockQuantity"
-              placeholder="Stock Quantity"
-              value={formData.stockQuantity}
-              onChange={(e) => handleInputChange("stockQuantity", e.target.value)}
-              className="border p-2 w-full rounded-md"
-              required
-            />
-
-            <input
-              type="number"
-              step="0.01"
-              name="price"
-              placeholder="Price"
-              value={formData.price}
-              onChange={(e) => handleInputChange("price", e.target.value)}
-              className="border p-2 w-full rounded-md"
-              required
-            />
-
-            <button
-              type="submit"
-              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full"
-            >
-              Add Product
-            </button>
+            <button type="submit" className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full">Add Product</button>
           </form>
         </div>
       </div>
