@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import chartImg from "../images/chart.png";
-import iconproduct from "../images/Iconproduct.png";
-import logout from "../images/logout.png";
+import logoutIcon from "../images/logout.png";
 import mail from "../images/mail.png";
 import shape from "../images/shape.png";
-import shoppingcart from "../images/shoppingcart.png";
 import user from "../images/user.png";
 import stoxLogo from "../images/stox-logo.png";
+import LogoutModal from "./LogoutModal";
 
-function SidebarUser() {
+function SidebarAdmin() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const linkClass = (path) =>
     `flex items-center gap-3 cursor-pointer ${location.pathname === path ? 'text-amber-500' : 'text-white'}`;
@@ -50,10 +51,10 @@ function SidebarUser() {
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>
-          <Link to="/Logout" className={linkClass("/Logout")}>
-            <img src={logout} alt="" />
+          <button onClick={() => setShowLogout(true)} className="flex items-center gap-3 text-white">
+            <img src={logoutIcon} alt="" />
             <h3>Logout</h3>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -71,12 +72,23 @@ function SidebarUser() {
           <Link to="/AdminDashboard" className={mobileLinkClass("/AdminDashboard")}>Overview</Link>
           <Link to="/See_Users" className={mobileLinkClass("/See_Users")}>Users</Link>
           <Link to="/See_Messages" className={mobileLinkClass("/See_Messages")}>See Messages</Link>
-          <Link to="/settings" className={mobileLinkClass("/settings")}>Settings</Link>
-          <Link to="/Logout" className={mobileLinkClass("/Logout")}>Logout</Link>
+          <Link to="/UserDashboard" className={mobileLinkClass("/UserDashboard")}>User Dashboard</Link>
+          <Link to="/SettingsPage" className={mobileLinkClass("/SettingsPage")}>Settings</Link>
+          <button onClick={() => setShowLogout(true)} className="text-left text-white">Logout</button>
         </div>
+      )}
+
+      {showLogout && (
+        <LogoutModal
+          onCancel={() => setShowLogout(false)}
+          onConfirm={() => {
+            localStorage.clear();
+            navigate("/login");
+          }}
+        />
       )}
     </>
   );
 }
 
-export default SidebarUser;
+export default SidebarAdmin;

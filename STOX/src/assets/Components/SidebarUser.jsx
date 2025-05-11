@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import chartImg from "../images/chart.png";
 import iconproduct from "../images/Iconproduct.png";
-import logout from "../images/logout.png";
+import logoutIcon from "../images/logout.png";
 import mail from "../images/mail.png";
 import shape from "../images/shape.png";
 import shoppingcart from "../images/shoppingcart.png";
 import user from "../images/user.png";
 import stoxLogo from "../images/stox-logo.png";
+import LogoutModal from "./LogoutModal";
 
 function SidebarUser() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
   const location = useLocation();
-
-  // Kullanıcının rolünü çek
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
 
   const linkClass = (path) =>
@@ -46,8 +47,6 @@ function SidebarUser() {
               <img src={user} alt="" />
               <h3>Customers</h3>
             </Link>
-
-            {/* Admin özel link */}
             {role === "Admin" && (
               <Link to="/AdminDashboard" className={linkClass("/AdminDashboard")}>
                 <img src={shape} alt="" />
@@ -65,10 +64,10 @@ function SidebarUser() {
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>
-          <Link to="/Logout" className={linkClass("/Logout")}>
-            <img src={logout} alt="" />
+          <button onClick={() => setShowLogout(true)} className="flex items-center gap-3 text-white">
+            <img src={logoutIcon} alt="" />
             <h3>Logout</h3>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -87,16 +86,23 @@ function SidebarUser() {
           <Link to="/Product" className={mobileLinkClass("/Product")}>Products</Link>
           <Link to="/orders" className={mobileLinkClass("/orders")}>Sales</Link>
           <Link to="/Customer" className={mobileLinkClass("/Customer")}>Customers</Link>
-
-          {/* Admin özel mobil link */}
           {role === "Admin" && (
             <Link to="/AdminDashboard" className={mobileLinkClass("/AdminDashboard")}>Admin Panel</Link>
           )}
-
           <Link to="/messages" className={mobileLinkClass("/messages")}>Contact Us</Link>
-          <Link to="/settings" className={mobileLinkClass("/settings")}>Settings</Link>
-          <Link to="/Logout" className={mobileLinkClass("/Logout")}>Logout</Link>
+          <Link to="/SettingsPage" className={mobileLinkClass("/SettingsPage")}>Settings</Link>
+          <button onClick={() => setShowLogout(true)} className="text-left text-white">Logout</button>
         </div>
+      )}
+
+      {showLogout && (
+        <LogoutModal
+          onCancel={() => setShowLogout(false)}
+          onConfirm={() => {
+            localStorage.clear();
+            navigate("/login");
+          }}
+        />
       )}
     </>
   );
