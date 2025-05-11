@@ -3,6 +3,18 @@ import SidebarUser from '../assets/Components/SidebarUser';
 import Header from "../assets/Components/Header";
 import { Link, useNavigate } from 'react-router-dom';
 
+function getUserIdFromToken() {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.User_ID || payload.user_id || payload.sub;
+  } catch (error) {
+    return null;
+  }
+}
+
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,16 +27,21 @@ function ProductList() {
   const itemsPerPage = 6;
 
   const localIdMapRef = useRef({});
+  const userIdRef = useRef(null);
 
   useEffect(() => {
-    const storedMap = localStorage.getItem("localIdMap");
+    const userId = getUserIdFromToken();
+    userIdRef.current = userId;
+
+    const storedMap = localStorage.getItem(`localIdMap_${userId}`);
     if (storedMap) {
       localIdMapRef.current = JSON.parse(storedMap);
     }
-    fetchProducts();
+
+    fetchProducts(userId);
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (userId) => {
     try {
       const token = localStorage.getItem("token");
 
@@ -45,7 +62,7 @@ function ProductList() {
         }
       });
 
-      localStorage.setItem("localIdMap", JSON.stringify(localIdMapRef.current));
+      localStorage.setItem(`localIdMap_${userId}`, JSON.stringify(localIdMapRef.current));
 
       const productsWithLocalId = data.map(product => ({
         ...product,
@@ -65,8 +82,14 @@ function ProductList() {
 
   const handleDelete = async () => {
     try {
+      const token = localStorage.getItem("token");
+      const userId = userIdRef.current;
+
       const response = await fetch(`http://localhost:5064/api/product/${deleteId}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (!response.ok) throw new Error("Failed to delete product");
@@ -74,7 +97,7 @@ function ProductList() {
       const updatedProducts = products.filter(p => p.product_ID !== deleteId);
 
       delete localIdMapRef.current[deleteId];
-      localStorage.setItem("localIdMap", JSON.stringify(localIdMapRef.current));
+      localStorage.setItem(`localIdMap_${userId}`, JSON.stringify(localIdMapRef.current));
 
       setProducts(updatedProducts);
       setShowConfirm(false);

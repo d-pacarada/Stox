@@ -7,7 +7,7 @@ namespace Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Only allow authenticated users
+    [Authorize] 
     public class CustomerController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -17,7 +17,7 @@ namespace Server.Controllers
             _context = context;
         }
 
-        // ✅ GET api/customer/user → Load customers only for the logged-in user
+        //GET api/customer/user → Load customers only for the logged-in user
         [HttpGet("user")]
         public async Task<IActionResult> GetUserCustomers()
         {
@@ -34,7 +34,7 @@ namespace Server.Controllers
             return Ok(customers);
         }
 
-        // ✅ GET api/customer/{id} → Get single customer by ID
+        //GET api/customer/{id} → Get single customer by ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomer(int id)
         {
@@ -46,7 +46,7 @@ namespace Server.Controllers
             return Ok(customer);
         }
 
-        // ✅ POST api/customer → Add new customer (assign user id from token)
+        //POST api/customer → Add new customer (assign user id from token)
         [HttpPost]
         public async Task<IActionResult> AddCustomer([FromBody] Customer customer)
         {
@@ -66,7 +66,7 @@ namespace Server.Controllers
             return Ok(customer);
         }
 
-        // ✅ PUT api/customer/{id} → Update customer
+        //PUT api/customer/{id} → Update customer
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCustomer(int id, [FromBody] Customer updatedCustomer)
         {
@@ -97,7 +97,7 @@ namespace Server.Controllers
             return Ok(customer);
         }
 
-        // ✅ DELETE api/customer/{id}
+        //DELETE api/customer/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(int id)
         {

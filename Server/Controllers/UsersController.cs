@@ -35,19 +35,19 @@ public async Task<IActionResult> DeleteUser(int id)
     if (user == null)
         return NotFound();
 
-    // Customers sil
+    
     if (user.Customers != null)
         _context.Customer.RemoveRange(user.Customers);
 
-    // Products sil
+   
     var products = _context.Product.Where(p => p.User_ID == id);
     _context.Product.RemoveRange(products);
 
-    // UserRoles sil (YENİ EKLEDİK)
+    
     var userRoles = _context.UserRole.Where(ur => ur.User_ID == id);
     _context.UserRole.RemoveRange(userRoles);
 
-    // User sil
+    
     _context.User.Remove(user);
     await _context.SaveChangesAsync();
 

@@ -18,7 +18,7 @@ namespace Server.Controllers
             _context = context;
         }
 
-        // GET api/product (for admins or debugging - shows all products)
+       
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
@@ -39,7 +39,7 @@ namespace Server.Controllers
             return Ok(products);
         }
 
-        // ✅ GET api/product/user → Load products only for the logged-in user
+        
         [HttpGet("user")]
         [Authorize]
         public async Task<IActionResult> GetProductsForUser()
@@ -68,7 +68,7 @@ namespace Server.Controllers
             return Ok(products);
         }
 
-        // GET api/product/{id}
+       
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
@@ -82,7 +82,7 @@ namespace Server.Controllers
             return Ok(product);
         }
 
-        // ✅ POST api/product → Add product (and assign user id)
+       
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> AddProduct([FromBody] Product product)
@@ -102,7 +102,7 @@ namespace Server.Controllers
             return Ok(product);
         }
 
-        // PUT api/product/{id}
+      
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product updatedProduct)
         {
@@ -122,7 +122,7 @@ namespace Server.Controllers
             return Ok(product);
         }
 
-        // DELETE api/product/{id}
+     
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
