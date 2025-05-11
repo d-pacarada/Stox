@@ -8,6 +8,8 @@ import shape from "../images/shape.png";
 import shoppingcart from "../images/shoppingcart.png";
 import user from "../images/user.png";
 import stoxLogo from "../images/stox-logo.png";
+import Panel from "../images/panel.png";
+import Purchase from "../images/purchase.png";
 import LogoutModal from "./LogoutModal";
 
 function SidebarUser() {
@@ -48,12 +50,12 @@ function SidebarUser() {
               <h3>Customers</h3>
             </Link>
              <Link to="/Purchase" className={linkClass("/Purchase")}>
-              <img src={user} alt="" />
+              <img src={Purchase} alt="" />
               <h3>Purchase</h3>
             </Link>
             {role === "Admin" && (
               <Link to="/AdminDashboard" className={linkClass("/AdminDashboard")}>
-                <img src={shape} alt="" />
+                <img src={Panel} alt="" />
                 <h3>Admin Panel</h3>
               </Link>
             )}

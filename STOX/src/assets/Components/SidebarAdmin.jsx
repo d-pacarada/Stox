@@ -7,6 +7,7 @@ import shape from "../images/shape.png";
 import user from "../images/user.png";
 import stoxLogo from "../images/stox-logo.png";
 import LogoutModal from "./LogoutModal";
+import Panel from "../images/panel.png";
 
 function SidebarAdmin() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +42,7 @@ function SidebarAdmin() {
               <h3>See Messages</h3>
             </Link>
             <Link to="/UserDashboard" className={linkClass("/UserDashboard")}>
-              <img src={chartImg} alt="" />
+              <img src={Panel} alt="" />
               <h3>User Dashboard</h3>
             </Link>
           </div>
