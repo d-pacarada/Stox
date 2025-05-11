@@ -15,6 +15,7 @@ import AddSale from './Page/AddSale';
 import EditProduct from './Page/EditProduct';
 import EditCustomer from './Page/EditCustomer';
 import See_Messages from './Page/See_Messages';
+import AddPurchase from './Page/AddPurchase';
 import See_Users from './Page/See_Users';
 import Sale from './Page/Sale';
 import Purchase from './Page/Purchase';
@@ -42,6 +43,7 @@ function App() {
       <Route path="/AddProduct" element={<AddProduct />} />
       <Route path="/AddCustomer" element={<AddCustomer />} />
       <Route path="/AddSale" element={<AddSale />} />
+      <Route path="/AddPurchase" element={<AddPurchase />} />
       <Route path="/Sale" element={<Sale />} />
       <Route path="/Purchase" element={<Purchase />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />
