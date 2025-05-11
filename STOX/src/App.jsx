@@ -15,6 +15,8 @@ import EditProduct from './Page/EditProduct';
 import EditCustomer from './Page/EditCustomer';
 import See_Messages from './Page/See_Messages';
 import See_Users from './Page/See_Users';
+import Sale from './Page/Sale';
+import Purchase from './Page/Purchase';
 import SettingsPage from './Page/SettingsPage';
 import ContactDashboard from "./Page/ContactDashboard";
 import SidebarUser from './assets/Components/SidebarUser';
@@ -38,6 +40,8 @@ function App() {
       <Route path="/See_Users" element={<See_Users />} />
       <Route path="/AddProduct" element={<AddProduct />} />
       <Route path="/AddCustomer" element={<AddCustomer />} />
+      <Route path="/Sale" element={<Sale />} />
+      <Route path="/Purchase" element={<Purchase />} />
       <Route path="/SidebarUser" element={<SidebarUser />} />
       <Route path="/SidebarAdmin" element={<SidebarAdmin />} />
       <Route path="/EditProduct/:id" element={<EditProduct />} />

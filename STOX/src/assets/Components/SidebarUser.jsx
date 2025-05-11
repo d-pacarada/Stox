@@ -39,13 +39,17 @@ function SidebarUser() {
               <img src={iconproduct} alt="" />
               <h3 className='ml-1.5'>Products</h3>
             </Link>
-            <Link to="/orders" className={linkClass("/orders")}>
+            <Link to="/Sale" className={linkClass("/Sale")}>
               <img src={shoppingcart} alt="" />
               <h3>Sales</h3>
             </Link>
             <Link to="/Customer" className={linkClass("/Customer")}>
               <img src={user} alt="" />
               <h3>Customers</h3>
+            </Link>
+             <Link to="/Purchase" className={linkClass("/Purchase")}>
+              <img src={user} alt="" />
+              <h3>Purchase</h3>
             </Link>
             {role === "Admin" && (
               <Link to="/AdminDashboard" className={linkClass("/AdminDashboard")}>
@@ -84,8 +88,9 @@ function SidebarUser() {
         <div className="md:hidden bg-[#112D4E] flex flex-col gap-4 p-4">
           <Link to="/UserDashboard" className={mobileLinkClass("/UserDashboard")}>Overview</Link>
           <Link to="/Product" className={mobileLinkClass("/Product")}>Products</Link>
-          <Link to="/orders" className={mobileLinkClass("/orders")}>Sales</Link>
+          <Link to="/Sale" className={mobileLinkClass("/Sale")}>Sales</Link>
           <Link to="/Customer" className={mobileLinkClass("/Customer")}>Customers</Link>
+          <Link to="/Purchase" className={mobileLinkClass("/Purchase")}>Purchase</Link>
           {role === "Admin" && (
             <Link to="/AdminDashboard" className={mobileLinkClass("/AdminDashboard")}>Admin Panel</Link>
           )}

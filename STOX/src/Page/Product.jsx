@@ -16,7 +16,6 @@ function ProductList() {
 
   const localIdMapRef = useRef({});
 
-  // Yüklemede localStorage'den localId'leri getir
   useEffect(() => {
     const storedMap = localStorage.getItem("localIdMap");
     if (storedMap) {
@@ -39,7 +38,6 @@ function ProductList() {
 
       const data = await response.json();
 
-      // Yeni ürünler için localId üret
       let maxLocalId = Math.max(0, ...Object.values(localIdMapRef.current));
       data.forEach((product) => {
         if (!localIdMapRef.current[product.product_ID]) {
@@ -47,7 +45,6 @@ function ProductList() {
         }
       });
 
-      // Güncel map'i kaydet
       localStorage.setItem("localIdMap", JSON.stringify(localIdMapRef.current));
 
       const productsWithLocalId = data.map(product => ({
@@ -76,7 +73,6 @@ function ProductList() {
 
       const updatedProducts = products.filter(p => p.product_ID !== deleteId);
 
-      // localIdMapRef içinden de sil
       delete localIdMapRef.current[deleteId];
       localStorage.setItem("localIdMap", JSON.stringify(localIdMapRef.current));
 
