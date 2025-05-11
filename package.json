@@ -28,6 +28,7 @@
     "esbuild": "^0.25.2",
     "nanoid": "^3.3.11",
     "picocolors": "^1.1.1",
+    "react-select": "^5.10.1",
     "rollup": "^4.39.0",
     "source-map-js": "^1.2.1"
   },
