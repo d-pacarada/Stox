@@ -18,7 +18,6 @@ namespace Server.Controllers
             _context = context;
         }
 
-       
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
@@ -39,7 +38,6 @@ namespace Server.Controllers
             return Ok(products);
         }
 
-        
         [HttpGet("user")]
         [Authorize]
         public async Task<IActionResult> GetProductsForUser()
@@ -68,7 +66,6 @@ namespace Server.Controllers
             return Ok(products);
         }
 
-       
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
@@ -82,7 +79,6 @@ namespace Server.Controllers
             return Ok(product);
         }
 
-       
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> AddProduct([FromBody] Product product)
@@ -102,7 +98,6 @@ namespace Server.Controllers
             return Ok(product);
         }
 
-      
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product updatedProduct)
         {
@@ -122,7 +117,6 @@ namespace Server.Controllers
             return Ok(product);
         }
 
-     
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -134,6 +128,53 @@ namespace Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // -----------------------------------------
+        // CATEGORY METHODS BELOW
+        // -----------------------------------------
+
+        [HttpGet("category/user")]
+        [Authorize]
+        public async Task<IActionResult> GetCategoriesForUser()
+        {
+            var userIdClaim = User.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
+
+            int userId = int.Parse(userIdClaim);
+
+            var categories = await _context.Category
+                .Where(c => c.User_ID == userId)
+                .Select(c => new { c.Category_ID, c.Category_Name })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
+
+        [HttpPost("category")]
+        [Authorize]
+        public async Task<IActionResult> AddCategory([FromBody] Category category)
+        {
+            var userIdClaim = User.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
+
+            int userId = int.Parse(userIdClaim);
+
+            bool exists = await _context.Category.AnyAsync(c =>
+                c.User_ID == userId &&
+                c.Category_Name.ToLower() == category.Category_Name.ToLower());
+
+            if (exists)
+                return BadRequest("Category already exists.");
+
+            category.User_ID = userId;
+
+            _context.Category.Add(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(category);
         }
     }
 }

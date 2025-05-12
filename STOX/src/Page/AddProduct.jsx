@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from "../assets/Components/Header";
 import SidebarUser from '../assets/Components/SidebarUser';
 import { useNavigate } from "react-router-dom";
-import CreatableSelect from 'react-select/creatable'; // <-- Changed import
+import CreatableSelect from 'react-select/creatable';
 
 export default function AddProduct() {
   const [formData, setFormData] = useState({
@@ -23,7 +23,12 @@ export default function AddProduct() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:5064/api/category');
+      const token = localStorage.getItem("token");
+      const response = await fetch('http://localhost:5064/api/product/category/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -67,7 +72,7 @@ export default function AddProduct() {
     } else {
       try {
         const token = localStorage.getItem("token");
-        const createResponse = await fetch('http://localhost:5064/api/category', {
+        const createResponse = await fetch('http://localhost:5064/api/product/category', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

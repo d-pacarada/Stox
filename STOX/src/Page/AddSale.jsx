@@ -104,7 +104,7 @@ function AddSale() {
       <div className="flex-1 p-4 md:p-8 flex flex-col">
         <Header />
 
-        <div className="flex justify-center mt-10 lg:mt-40">
+        <div className="flex justify-center mt-10 lg:mt-20">
           <div className="max-w-xl w-full p-6">
             <h2 className="text-2xl font-bold mb-4 text-[#112D4E]">Invoice</h2>
 
