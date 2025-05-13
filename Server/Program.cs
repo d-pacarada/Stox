@@ -3,8 +3,12 @@ using Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using QuestPDF.Infrastructure; // ✅ Needed for setting license
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ✅ Set QuestPDF license
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services
 builder.Services.AddEndpointsApiExplorer();
@@ -26,7 +30,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-//Add JWT Authentication
+// Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,11 +46,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -54,10 +56,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseCors("AllowFrontend");
-app.UseAuthentication(); 
-app.UseAuthorization();  
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
