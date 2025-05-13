@@ -9,6 +9,12 @@ function Sale() {
   const [sortOption, setSortOption] = useState("Invoice_ID-Ascending");
   const [showModal, setShowModal] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -40,11 +46,14 @@ function Sale() {
     }
   };
 
-  const deleteInvoice = async (invoiceId) => {
-    if (!window.confirm("Are you sure you want to delete this invoice?")) return;
+  const confirmDelete = (id) => {
+    setDeleteId(id);
+    setShowConfirm(true);
+  };
 
+  const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5064/api/invoice/${invoiceId}`, {
+      const res = await fetch(`http://localhost:5064/api/invoice/${deleteId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -60,6 +69,8 @@ function Sale() {
       }
     } catch (err) {
       console.error("Error deleting invoice:", err);
+    } finally {
+      setShowConfirm(false);
     }
   };
 
@@ -76,16 +87,16 @@ function Sale() {
       }
 
       const payload = {
-  From: "STOX\nBardhosh\nPrishtine, Kosove",
-  To: invoiceMeta.customerEmail,
-  Number: invoiceId,
-  Amount_Paid: 0,
-  Items: items.map(item => ({
-    Name: item.product_Name,
-    Quantity: item.quantity,
-    Unit_Cost: item.price
-  }))
-};
+        From: "STOX\nBardhosh\nPrishtine, Kosove",
+        To: invoiceMeta.customerEmail,
+        Number: invoiceId,
+        Amount_Paid: 0,
+        Items: items.map(item => ({
+          Name: item.product_Name,
+          Quantity: item.quantity,
+          Unit_Cost: item.price
+        }))
+      };
 
       const res = await fetch("http://localhost:5064/api/invoice/email", {
         method: "POST",
@@ -119,23 +130,22 @@ function Sale() {
       if (!invoiceMeta) throw new Error("Invoice metadata not found");
 
       const payload = {
-  From: "STOX\nBardhosh\nPrishtine, Kosove",
-  To: invoiceMeta.customerEmail,
-  Number: invoiceId,
-  Amount_Paid: 0,
-  Items: items.map(item => ({
-    Name: item.product_Name,
-    Quantity: item.quantity,
-    Unit_Cost: item.price
-  }))
-};
-
+        From: "STOX\nBardhosh\nPrishtine, Kosove",
+        To: invoiceMeta.customerEmail,
+        Number: invoiceId,
+        Amount_Paid: 0,
+        Items: items.map(item => ({
+          Name: item.product_Name,
+          Quantity: item.quantity,
+          Unit_Cost: item.price
+        }))
+      };
 
       const res = await fetch("http://localhost:5064/api/invoice/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` // ✅ Added header
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
@@ -173,15 +183,20 @@ function Sale() {
       return direction === "Ascending" ? (aVal < bVal ? -1 : 1) : (aVal > bVal ? -1 : 1);
     });
 
+  const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
+  const currentInvoices = filteredInvoices.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const formatDate = (dateStr) => new Date(dateStr).toLocaleString("en-GB");
   const formatCurrency = (amount) => `${parseFloat(amount).toFixed(2)}€`;
+
+  const totalAmount = filteredInvoices.reduce((sum, inv) => sum + parseFloat(inv.total_Amount), 0);
 
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
       <SidebarUser />
-      <div className="flex-1 p-4 flex flex-col">
+      <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
-        <div className="flex flex-col mt-4 md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 mx-10">
+        <div className="flex flex-col mt-4 md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 mx-5 lg:mx-15">
           <input
             type="text"
             placeholder="Search"
@@ -206,38 +221,39 @@ function Sale() {
             </select>
             <Link
               to="/AddSale"
-              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full md:w-auto text-center"
+              className="bg-[#112D4E] text-white px-6 py-2  rounded-md hover:bg-[#0b213f] w-full md:w-auto text-center"
             >
               Add Invoice
             </Link>
           </div>
         </div>
 
-        <div className="overflow-x-auto mx-10">
-          <h2 className="text-2xl font-bold mb-4 text-center text-[#112D4E]">Invoice List</h2>
-          <table className="min-w-full bg-white border rounded-md text-sm">
+        <div className="overflow-x-auto flex-grow md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 mx-5">
+          <table className="min-w-full border-collapse border border-gray-300">
             <thead className="bg-[#112D4E] text-white">
               <tr>
-                <th className="py-2 px-4 text-left">ID</th>
-                <th className="py-2 px-4 text-left">Customer Name</th>
-                <th className="py-2 px-4 text-left">Date</th>
-                <th className="py-2 px-4 text-left">Total</th>
-                <th className="py-2 px-4 text-left">Actions</th>
+                <th className="p-3">ID</th>
+                <th className="p-3">Customer Name</th>
+                <th className="p-3">Date</th>
+                <th className="p-3">Total</th>
+                <th className="p-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredInvoices.length > 0 ? (
-                filteredInvoices.map((inv) => (
+              {currentInvoices.length > 0 ? (
+                currentInvoices.map((inv) => (
                   <tr key={inv.invoice_ID} className="border-t">
-                    <td className="py-2 px-4">{inv.invoice_ID}</td>
-                    <td className="py-2 px-4">{inv.customerName}</td>
-                    <td className="py-2 px-4">{formatDate(inv.invoice_Date)}</td>
-                    <td className="py-2 px-4">{formatCurrency(inv.total_Amount)}</td>
-                    <td className="py-2 px-4 space-x-1">
-                      <button onClick={() => viewInvoiceDetails(inv.invoice_ID)} className="bg-blue-700 hover:bg-blue-800 text-white px-2 py-1 rounded-md text-xs">View</button>
-                      <button onClick={() => deleteInvoice(inv.invoice_ID)} className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-xs">Delete</button>
-                      <button onClick={() => sendInvoiceEmail(inv.invoice_ID)} className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded-md text-xs">Email</button>
-                      <button onClick={() => downloadPdf(inv.invoice_ID)} className="bg-gray-700 hover:bg-gray-800 text-white px-2 py-1 rounded-md text-xs">PDF</button>
+                    <td className="p-3 text-center">{inv.invoice_ID}</td>
+                    <td className="p-3 text-center">{inv.customerName}</td>
+                    <td className="p-3 text-center">{formatDate(inv.invoice_Date)}</td>
+                    <td className="p-3 text-center">{formatCurrency(inv.total_Amount)}</td>
+                    <td className="p-3 text-center space-x-2">
+                     <div className="flex flex-wrap gap-2 justify-center md:justify-center">
+                    <button onClick={() => viewInvoiceDetails(inv.invoice_ID)} className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md text-xs ">View</button>
+                    <button onClick={() => confirmDelete(inv.invoice_ID)} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs">Delete</button>
+                    <button onClick={() => sendInvoiceEmail(inv.invoice_ID)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-xs">Email</button>
+                    <button onClick={() => downloadPdf(inv.invoice_ID)} className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-xs">PDF</button>
+                    </div>
                     </td>
                   </tr>
                 ))
@@ -248,6 +264,56 @@ function Sale() {
           </table>
         </div>
 
+        {/* Pagination */}
+        <div className="flex justify-center items-center space-x-4 mt-6">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+          >
+            Previous
+          </button>
+          <p className="text-sm">Page {currentPage} of {totalPages}</p>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}
+          >
+            Next
+          </button>
+        </div>
+
+        {/* Summary */}
+        <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
+          <p>Total Invoices: {filteredInvoices.length}</p>
+          <p>Total Amount: {formatCurrency(totalAmount)}</p>
+        </div>
+
+        {/* Delete Confirm Popup */}
+        {showConfirm && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
+              <div className="text-red-600 text-4xl">!</div>
+              <h2 className="text-xl font-semibold">Are you sure you want to delete this invoice?</h2>
+              <div className="flex justify-center space-x-4 mt-4">
+                <button
+                  onClick={handleDelete}
+                  className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
+                >
+                  Yes, I'm sure
+                </button>
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="border border-gray-400 px-6 py-2 rounded hover:bg-gray-100"
+                >
+                  No, cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Invoice Detail Modal */}
         {showModal && (
           <div className="fixed inset-0 flex justify-center items-center z-50">
             <div className="bg-white rounded-xl p-6 max-w-xl w-full shadow-lg relative">

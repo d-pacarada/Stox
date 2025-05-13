@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import SidebarUser from '../assets/Components/SidebarUser';
 import Header from "../assets/Components/Header";
 import Select from 'react-select';
@@ -11,6 +12,7 @@ function AddSale() {
   const [total, setTotal] = useState(0);
 
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCustomers();
@@ -114,7 +116,6 @@ function AddSale() {
 
       if (res.ok) {
         alert("Invoice saved successfully!");
-        // Optionally reset form
         setSelectedCustomer('');
         setItems([{ productId: '', quantity: 1, price: 0, warning: '' }]);
         setTotal(0);
@@ -148,7 +149,17 @@ function AddSale() {
 
         <div className="flex justify-center mt-10 2xl:mt-35 xl:mt-10">
           <div className="max-w-xl w-full max-h-screen">
-            <h2 className="text-2xl font-bold mb-4 text-[#112D4E]">Invoice</h2>
+          <div className="relative mb-5">
+          <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2"
+         >
+          &lt;&lt; Back
+        </button>
+        <h2 className="text-2xl font-bold text-center text-[#112D4E]">Invoice</h2>
+          </div>
+
 
             <label className="text-sm font-semibold">Customer</label>
             <Select
@@ -163,7 +174,7 @@ function AddSale() {
 
             <div className="grid grid-cols-5 gap-2 font-semibold text-sm mb-2">
               <div className="col-span-2">Product</div>
-              <div>Qty</div>
+              <div>Quantity</div>
               <div>Price</div>
               <div>Amount</div>
             </div>

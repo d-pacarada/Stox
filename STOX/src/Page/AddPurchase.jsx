@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SidebarUser from '../assets/Components/SidebarUser';
 import Header from '../assets/Components/Header';
 import CreatableSelect from 'react-select/creatable';
@@ -10,15 +11,14 @@ function AddPurchase() {
   const [total, setTotal] = useState(0);
 
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
   useEffect(() => {
-    const calculatedTotal = items.reduce((sum, item) => {
-      return sum + item.quantity * item.price;
-    }, 0);
+    const calculatedTotal = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
     setTotal(calculatedTotal);
   }, [items]);
 
@@ -41,11 +41,7 @@ function AddPurchase() {
 
   const handleChange = (index, field, value) => {
     const newItems = [...items];
-    if (field === 'quantity' || field === 'price') {
-      newItems[index][field] = parseFloat(value) || 0;
-    } else {
-      newItems[index][field] = value;
-    }
+    newItems[index][field] = field === 'quantity' || field === 'price' ? parseFloat(value) || 0 : value;
     setItems(newItems);
   };
 
@@ -67,18 +63,28 @@ function AddPurchase() {
     }
   };
 
-  const formatCurrency = (val) =>
-    val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
+  const formatCurrency = (val) => val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
 
   return (
     <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
-      <div className="flex-1 p-4 md:p-8 flex flex-col overflow-hidden">
+      <div className="flex-1 p-4 flex flex-col overflow-hidden">
         <Header />
 
         <div className="flex justify-center 2xl:mt-35 xl:mt-10">
-          <div className="max-w-xl w-full p-6 max-h-screen">
-            <h2 className="text-2xl font-bold mb-4 text-[#112D4E]">Purchase Invoice</h2>
+          <div className="max-w-xl w-full max-h-screen">
+            
+            {/* Back button + Title */}
+            <div className="relative mb-5">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2"
+              >
+                &lt;&lt; Back
+              </button>
+              <h2 className="text-2xl font-bold text-center text-[#112D4E]">Purchase Invoice</h2>
+            </div>
 
             <label className="text-sm font-semibold">Supplier</label>
             <input
@@ -86,7 +92,7 @@ function AddPurchase() {
               value={supplierName}
               onChange={(e) => setSupplierName(e.target.value)}
               placeholder="Supplier Name"
-              className="w-full border px-4 py-2 rounded-md mb-6"
+              className="w-full border px-4 py-2 rounded-md mb-3"
             />
 
             <div className="grid grid-cols-5 gap-2 font-semibold text-sm mb-2">
@@ -96,9 +102,9 @@ function AddPurchase() {
               <div>Amount</div>
             </div>
 
-            {/* Scroll only if 4+ items */}
-            <div className={`${items.length >= 4 ? 'max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent' : ''} pr-1`}>
+            <div className="max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
               {items.map((item, index) => {
+                const selectedProduct = productOptions.find(p => p.value === parseInt(item.productId));
                 const amount = item.quantity * item.price;
 
                 return (
@@ -108,11 +114,7 @@ function AddPurchase() {
                         <CreatableSelect
                           options={productOptions}
                           onChange={(option) => handleProductSelect(index, option)}
-                          value={
-                            item.productName
-                              ? { label: item.productName, value: item.productName }
-                              : null
-                          }
+                          value={item.productName ? { label: item.productName, value: item.productName } : null}
                           placeholder="Select or type"
                           className="text-sm"
                           menuPortalTarget={document.body}
