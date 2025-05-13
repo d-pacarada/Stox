@@ -86,6 +86,48 @@ function AddSale() {
 
   const formatCurrency = (val) => val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
 
+  const handleSubmit = async () => {
+    if (!selectedCustomer || items.length === 0) {
+      alert("Please select a customer and add at least one item.");
+      return;
+    }
+
+    const requestBody = {
+      customer_ID: selectedCustomer,
+      total_Amount: total,
+      items: items.map(item => ({
+        product_ID: item.productId,
+        quantity: item.quantity,
+        price: item.price
+      }))
+    };
+
+    try {
+      const res = await fetch("http://localhost:5064/api/invoice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (res.ok) {
+        alert("Invoice saved successfully!");
+        // Optionally reset form
+        setSelectedCustomer('');
+        setItems([{ productId: '', quantity: 1, price: 0, warning: '' }]);
+        setTotal(0);
+      } else {
+        const err = await res.text();
+        alert("Failed to save invoice: " + err);
+      }
+    } catch (err) {
+      console.error("Error submitting invoice:", err);
+      alert("An error occurred while submitting the invoice.");
+    }
+  };
+
   const customerOptions = customers.map(c => ({
     value: c.customer_ID,
     label: c.full_Name
@@ -126,7 +168,6 @@ function AddSale() {
               <div>Amount</div>
             </div>
 
-            {/* Scrollable Product List */}
             <div className="max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
               {items.map((item, index) => {
                 const selectedProduct = productOptions.find(p => p.value === parseInt(item.productId));
@@ -196,7 +237,10 @@ function AddSale() {
               <span>{formatCurrency(total)}</span>
             </div>
 
-            <button className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full">
+            <button
+              onClick={handleSubmit}
+              className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full"
+            >
               Save Invoice
             </button>
           </div>

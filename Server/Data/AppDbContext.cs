@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<Category> Category { get; set; }
     public DbSet<Product> Product { get; set; }
     public DbSet<Customer> Customer { get; set; } 
+    public DbSet<Invoice> Invoice { get; set; }
+    public DbSet<InvoiceItem> InvoiceItems { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
