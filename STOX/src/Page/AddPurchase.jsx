@@ -6,9 +6,7 @@ import CreatableSelect from 'react-select/creatable';
 function AddPurchase() {
   const [supplierName, setSupplierName] = useState('');
   const [products, setProducts] = useState([]);
-  const [items, setItems] = useState([
-    { productName: '', quantity: 1, price: 0 }
-  ]);
+  const [items, setItems] = useState([{ productName: '', quantity: 1, price: 0 }]);
   const [total, setTotal] = useState(0);
 
   const token = localStorage.getItem('token');
@@ -73,13 +71,13 @@ function AddPurchase() {
     val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
 
   return (
-    <div className="flex flex-col min-h-screen md:flex-row">
+    <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
-      <div className="flex-1 p-4 md:p-8 flex flex-col">
+      <div className="flex-1 p-4 md:p-8 flex flex-col overflow-hidden">
         <Header />
 
-        <div className="flex justify-center mt-10 lg:mt-40">
-          <div className="max-w-xl w-full p-6">
+        <div className="flex justify-center 2xl:mt-35 xl:mt-10">
+          <div className="max-w-xl w-full p-6 max-h-screen">
             <h2 className="text-2xl font-bold mb-4 text-[#112D4E]">Purchase Invoice</h2>
 
             <label className="text-sm font-semibold">Supplier</label>
@@ -98,69 +96,67 @@ function AddPurchase() {
               <div>Amount</div>
             </div>
 
-            {items.map((item, index) => {
-              const amount = item.quantity * item.price;
+            {/* Scroll only if 4+ items */}
+            <div className={`${items.length >= 4 ? 'max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent' : ''} pr-1`}>
+              {items.map((item, index) => {
+                const amount = item.quantity * item.price;
 
-              return (
-                <div key={index}>
-                  <div className="grid grid-cols-5 gap-2 mb-1 items-center relative">
-                    <div className="col-span-2">
-                      <CreatableSelect
-                        options={productOptions}
-                        onChange={(option) =>
-                          handleProductSelect(index, option)
-                        }
-                        value={
-                          item.productName
-                            ? { label: item.productName, value: item.productName }
-                            : null
-                        }
-                        placeholder="Select or type"
-                        className="text-sm"
+                return (
+                  <div key={index}>
+                    <div className="grid grid-cols-5 gap-2 mb-1 items-center relative">
+                      <div className="col-span-2">
+                        <CreatableSelect
+                          options={productOptions}
+                          onChange={(option) => handleProductSelect(index, option)}
+                          value={
+                            item.productName
+                              ? { label: item.productName, value: item.productName }
+                              : null
+                          }
+                          placeholder="Select or type"
+                          className="text-sm"
+                          menuPortalTarget={document.body}
+                          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                        />
+                      </div>
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleChange(index, 'quantity', e.target.value)}
+                        className="border px-2 py-1 rounded-md text-center"
                       />
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={item.price}
+                        onChange={(e) => handleChange(index, 'price', e.target.value)}
+                        className="border px-2 py-1 rounded-md text-center"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        value={formatCurrency(amount)}
+                        className="border px-2 py-1 rounded-md bg-gray-100 text-center"
+                      />
+                      {items.length > 1 && (
+                        <button
+                          onClick={() => removeItem(index)}
+                          className="absolute -right-6 top-2 text-red-500 text-xl font-bold hover:text-red-700"
+                          title="Remove"
+                        >
+                          &times;
+                        </button>
+                      )}
                     </div>
-                    <input
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleChange(index, 'quantity', e.target.value)
-                      }
-                      className="border px-2 py-1 rounded-md text-center"
-                    />
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={item.price}
-                      onChange={(e) =>
-                        handleChange(index, 'price', e.target.value)
-                      }
-                      className="border px-2 py-1 rounded-md text-center"
-                    />
-                    <input
-                      type="text"
-                      readOnly
-                      value={formatCurrency(amount)}
-                      className="border px-2 py-1 rounded-md bg-gray-100 text-center"
-                    />
-
-                    {items.length > 1 && (
-                      <button
-                        onClick={() => removeItem(index)}
-                        className="absolute -right-6 top-2 text-red-500 text-xl font-bold hover:text-red-700"
-                        title="Remove"
-                      >
-                        &times;
-                      </button>
-                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
 
             <button
               onClick={addItem}
-              className="text-blue-600  font-semibold text-sm mt-2 mb-4"
+              className="text-blue-600 font-semibold text-sm mt-2 mb-4"
             >
               + Add Item
             </button>
