@@ -44,39 +44,76 @@ namespace Server.Controllers
             return Ok("Message submitted and email sent successfully.");
         }
 
-        private bool SendEmail(string userEmail, string message)
+private bool SendEmail(string userEmail, string message)
+{
+    try
+    {
+        var smtpClient = new SmtpClient(_config["EmailSettings:SmtpServer"])
         {
-            try
-            {
-                var smtpClient = new SmtpClient(_config["EmailSettings:SmtpServer"])
-                {
-                    Port = int.Parse(_config["EmailSettings:Port"]),
-                    Credentials = new NetworkCredential(
-                        _config["EmailSettings:SenderEmail"],
-                        _config["EmailSettings:SenderPassword"]
-                    ),
-                    EnableSsl = true,
-                };
+            Port = int.Parse(_config["EmailSettings:Port"]),
+            Credentials = new NetworkCredential(
+                _config["EmailSettings:SenderEmail"],
+                _config["EmailSettings:SenderPassword"]
+            ),
+            EnableSsl = true,
+        };
 
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(_config["EmailSettings:SenderEmail"], "STOX Contact Form"),
-                    Subject = $"New Contact Message from {userEmail}",
-                    Body = $"Sender: {userEmail}\n\nMessage:\n{message}",
-                    IsBodyHtml = false,
-                };
+        // ✅ Fix: Move senderIp declaration here
+        string senderIp = HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Unknown";
 
-                mailMessage.To.Add(_config["EmailSettings:RecipientEmail"]);
-                smtpClient.Send(mailMessage);
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(_config["EmailSettings:SenderEmail"], "STOX Contact Form"),
+            Subject = $"New Contact Message from {userEmail}",
+            Body = $@"
+              <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #ffffff;'>
+                <div style='text-align: center; margin-bottom: 20px;'>
+                    <img src='https://i.imgur.com/hIUt2pQ.png' alt='STOX Logo' style='max-height: 60px;' />
+                </div>
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Email send failed: " + ex.Message);
-                return false;
-            }
-        }
+                <h2 style='color: #112D4E; border-bottom: 2px solid #3ABEF9; padding-bottom: 10px;'>📩 New Contact Message</h2>
+
+                <p style='margin: 20px 0; font-size: 15px;'>
+                  <strong>Sender:</strong> 
+                  <a href='mailto:{userEmail}' style='color: #3ABEF9; text-decoration: none;'>{userEmail}</a>
+                </p>
+
+                <p style='font-size: 15px;'><strong>Message:</strong></p>
+                <div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #3ABEF9; border-radius: 5px; font-size: 14px; line-height: 1.5;'>
+                  {System.Net.WebUtility.HtmlEncode(message).Replace("\n", "<br/>")}
+                </div>
+
+                <div style='margin: 25px 0; text-align: center;'>
+                  <a href='mailto:{userEmail}' style='background-color: #3ABEF9; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;'>
+                    📧 Reply to {userEmail}
+                  </a>
+                </div>
+
+                <hr style='margin: 30px 0; border: none; border-top: 1px solid #ddd;' />
+
+                <p style='font-size: 12px; color: #777;'>
+                  📅 Submitted on <strong>{DateTime.Now:MMMM dd, yyyy HH:mm}</strong><br/>
+                  🌐 Sender IP: <strong>{senderIp}</strong>
+                </p>
+
+                <p style='font-size: 12px; color: #999; text-align: center; margin-top: 30px;'>
+                  This message was sent via the <strong>STOX Contact Form</strong>.
+                </p>
+              </div>",
+            IsBodyHtml = true
+        };
+
+        mailMessage.To.Add(_config["EmailSettings:RecipientEmail"]);
+        smtpClient.Send(mailMessage);
+
+        return true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Email send failed: " + ex.Message);
+        return false;
+    }
+}
 
         public class ContactRequest
         {
