@@ -99,13 +99,13 @@ function AddSale() {
   }));
 
   return (
-    <div className="flex flex-col min-h-screen md:flex-row">
+    <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
-      <div className="flex-1 p-4 md:p-8 flex flex-col">
+      <div className="flex-1 p-4 flex flex-col overflow-hidden">
         <Header />
 
-        <div className="flex justify-center mt-10 lg:mt-20">
-          <div className="max-w-xl w-full p-6">
+        <div className="flex justify-center mt-10 2xl:mt-35 xl:mt-10">
+          <div className="max-w-xl w-full max-h-screen">
             <h2 className="text-2xl font-bold mb-4 text-[#112D4E]">Invoice</h2>
 
             <label className="text-sm font-semibold">Customer</label>
@@ -114,7 +114,9 @@ function AddSale() {
               value={customerOptions.find(c => c.value === parseInt(selectedCustomer))}
               onChange={(selectedOption) => setSelectedCustomer(selectedOption.value)}
               placeholder="Select customer"
-              className="mb-6"
+              className="mb-3"
+              menuPortalTarget={document.body}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
             />
 
             <div className="grid grid-cols-5 gap-2 font-semibold text-sm mb-2">
@@ -124,59 +126,63 @@ function AddSale() {
               <div>Amount</div>
             </div>
 
-            {items.map((item, index) => {
-              const selectedProduct = productOptions.find(p => p.value === parseInt(item.productId));
-              const amount = item.quantity * item.price;
+            {/* Scrollable Product List */}
+            <div className="max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+              {items.map((item, index) => {
+                const selectedProduct = productOptions.find(p => p.value === parseInt(item.productId));
+                const amount = item.quantity * item.price;
 
-              return (
-                <div key={index}>
-                  <div className="grid grid-cols-5 gap-2 mb-1 items-center relative">
-                    <div className="col-span-2">
-                      <Select
-                        options={productOptions}
-                        value={selectedProduct}
-                        onChange={(option) => handleProductChange(index, option)}
-                        placeholder="Select product"
-                        className="text-sm"
+                return (
+                  <div key={index}>
+                    <div className="grid grid-cols-5 gap-2 mb-1 items-center relative">
+                      <div className="col-span-2">
+                        <Select
+                          options={productOptions}
+                          value={selectedProduct}
+                          onChange={(option) => handleProductChange(index, option)}
+                          placeholder="Select product"
+                          className="text-sm"
+                          menuPortalTarget={document.body}
+                          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                        />
+                      </div>
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(index, e.target.value)}
+                        className="border px-2 py-1 rounded-md text-center"
                       />
+                      <input
+                        type="text"
+                        readOnly
+                        value={formatCurrency(item.price)}
+                        className="border px-2 py-1 rounded-md bg-gray-100 text-center"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        value={formatCurrency(amount)}
+                        className="border px-2 py-1 rounded-md bg-gray-100 text-center"
+                      />
+                      {items.length > 1 && (
+                        <button
+                          onClick={() => removeItem(index)}
+                          className="absolute -right-6 top-2 text-red-500 text-xl font-bold hover:text-red-700"
+                          title="Remove"
+                        >
+                          &times;
+                        </button>
+                      )}
                     </div>
-                    <input
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, e.target.value)}
-                      className="border px-2 py-1 rounded-md text-center"
-                    />
-                    <input
-                      type="text"
-                      readOnly
-                      value={formatCurrency(item.price)}
-                      className="border px-2 py-1 rounded-md bg-gray-100 text-center"
-                    />
-                    <input
-                      type="text"
-                      readOnly
-                      value={formatCurrency(amount)}
-                      className="border px-2 py-1 rounded-md bg-gray-100 text-center"
-                    />
 
-                    {items.length > 1 && (
-                      <button
-                        onClick={() => removeItem(index)}
-                        className="absolute -right-6 top-2 text-red-500 text-xl font-bold hover:text-red-700"
-                        title="Remove"
-                      >
-                        &times;
-                      </button>
+                    {item.warning && (
+                      <div className="text-red-600 text-xs mb-2">{item.warning}</div>
                     )}
                   </div>
-
-                  {item.warning && (
-                    <div className="text-red-600 text-xs mb-2">{item.warning}</div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
 
             <button
               onClick={addItem}
