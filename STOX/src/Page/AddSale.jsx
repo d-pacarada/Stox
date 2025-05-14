@@ -53,7 +53,13 @@ function AddSale() {
     newItems[index].productId = selectedOption.value;
     newItems[index].price = selectedOption.price;
     newItems[index].quantity = 1;
-    newItems[index].warning = '';
+
+    if (selectedOption.stock === 0) {
+      newItems[index].warning = 'This product is out of stock!';
+    } else {
+      newItems[index].warning = '';
+    }
+
     setItems(newItems);
   };
 
@@ -67,6 +73,8 @@ function AddSale() {
 
     if (selectedOption && newItems[index].quantity > selectedOption.stock) {
       newItems[index].warning = `Only ${selectedOption.stock} in stock`;
+    } else if (selectedOption && selectedOption.stock === 0) {
+      newItems[index].warning = 'This product is out of stock!';
     } else {
       newItems[index].warning = '';
     }
@@ -91,6 +99,16 @@ function AddSale() {
   const handleSubmit = async () => {
     if (!selectedCustomer || items.length === 0) {
       alert("Please select a customer and add at least one item.");
+      return;
+    }
+
+    const hasStockIssue = items.some(item => {
+      const selected = productOptions.find(p => p.value === parseInt(item.productId));
+      return selected?.stock === 0;
+    });
+
+    if (hasStockIssue) {
+      alert("One or more products are out of stock. Please remove or change them before submitting.");
       return;
     }
 
@@ -141,6 +159,8 @@ function AddSale() {
     stock: p.stock_Quantity
   }));
 
+  const isSubmitDisabled = items.some(item => item.warning);
+
   return (
     <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
@@ -149,17 +169,16 @@ function AddSale() {
 
         <div className="flex justify-center mt-10 2xl:mt-35 xl:mt-10">
           <div className="max-w-xl w-full max-h-screen">
-          <div className="relative mb-5">
-          <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2"
-         >
-          &lt;&lt; Back
-        </button>
-        <h2 className="text-2xl font-bold text-center text-[#112D4E]">Invoice</h2>
-          </div>
-
+            <div className="relative mb-5">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2"
+              >
+                &lt;&lt; Back
+              </button>
+              <h2 className="text-2xl font-bold text-center text-[#112D4E]">Invoice</h2>
+            </div>
 
             <label className="text-sm font-semibold">Customer</label>
             <Select
@@ -250,7 +269,8 @@ function AddSale() {
 
             <button
               onClick={handleSubmit}
-              className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full"
+              className={`text-white px-6 py-2 rounded-md w-full ${isSubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#112D4E] hover:bg-[#0b213f]'}`}
+              disabled={isSubmitDisabled}
             >
               Save Invoice
             </button>

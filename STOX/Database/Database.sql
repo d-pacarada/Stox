@@ -95,6 +95,8 @@ CREATE TABLE PurchaseInvoice (
     Total_Amount DECIMAL(10,2)
 );
 
+ALTER TABLE PurchaseInvoice ADD COLUMN User_ID INT NOT NULL;
+
 -- PURCHASE INVOICE ITEMS TABLE 
 CREATE TABLE PurchaseInvoice_Items (
     PurchaseInvoice_Item_ID INT PRIMARY KEY AUTO_INCREMENT,

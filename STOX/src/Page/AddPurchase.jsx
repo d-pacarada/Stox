@@ -4,10 +4,14 @@ import SidebarUser from '../assets/Components/SidebarUser';
 import Header from '../assets/Components/Header';
 import CreatableSelect from 'react-select/creatable';
 
+// Top imports remain the same...
+
 function AddPurchase() {
-  const [supplierName, setSupplierName] = useState('');
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [supplierInput, setSupplierInput] = useState('');
   const [products, setProducts] = useState([]);
-  const [items, setItems] = useState([{ productName: '', quantity: 1, price: 0 }]);
+  const [items, setItems] = useState([{ productId: '', quantity: 1, price: 0 }]);
   const [total, setTotal] = useState(0);
 
   const token = localStorage.getItem('token');
@@ -15,6 +19,7 @@ function AddPurchase() {
 
   useEffect(() => {
     fetchProducts();
+    fetchSuppliers();
   }, []);
 
   useEffect(() => {
@@ -34,10 +39,32 @@ function AddPurchase() {
     }
   };
 
+  const fetchSuppliers = async () => {
+    try {
+      const res = await fetch('http://localhost:5064/api/supplier/user', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setSuppliers(data);
+    } catch (err) {
+      console.error("Failed to fetch suppliers", err);
+    }
+  };
+
+  const supplierOptions = suppliers.map(s => ({ label: s.name, value: s.name }));
   const productOptions = products.map((p) => ({
     label: p.product_Name,
-    value: p.product_Name
+    value: p.product_ID,
+    price: p.price
   }));
+
+  const handleProductSelect = (index, option) => {
+    const newItems = [...items];
+    newItems[index].productId = option?.value || '';
+    newItems[index].price = option?.price || 0;
+    newItems[index].quantity = 1;
+    setItems(newItems);
+  };
 
   const handleChange = (index, field, value) => {
     const newItems = [...items];
@@ -45,14 +72,8 @@ function AddPurchase() {
     setItems(newItems);
   };
 
-  const handleProductSelect = (index, option) => {
-    const newItems = [...items];
-    newItems[index].productName = option?.value || '';
-    setItems(newItems);
-  };
-
   const addItem = () => {
-    setItems([...items, { productName: '', quantity: 1, price: 0 }]);
+    setItems([...items, { productId: '', quantity: 1, price: 0 }]);
   };
 
   const removeItem = (index) => {
@@ -65,16 +86,53 @@ function AddPurchase() {
 
   const formatCurrency = (val) => val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
 
+  const handleSubmit = async () => {
+    const supplierName = selectedSupplier?.label || supplierInput.trim();
+    if (!supplierName) {
+      alert("Please select or enter a supplier name.");
+      return;
+    }
+
+    const mappedItems = items
+      .filter(item => item.productId && item.quantity > 0 && item.price > 0)
+      .map(item => ({
+        product_ID: item.productId,
+        quantity: item.quantity,
+        price: item.price
+      }));
+
+    const payload = {
+      supplier_Name: supplierName,
+      total_Amount: total,
+      items: mappedItems
+    };
+
+    try {
+      const res = await fetch('http://localhost:5064/api/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      alert('Purchase saved successfully!');
+      navigate('/Purchase');
+    } catch (err) {
+      alert("Failed to save purchase: " + err.message);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
       <div className="flex-1 p-4 flex flex-col overflow-hidden">
         <Header />
-
-        <div className="flex justify-center 2xl:mt-35 xl:mt-10">
-          <div className="max-w-xl w-full max-h-screen">
-            
-            {/* Back button + Title */}
+        <div className="flex justify-center mt-10">
+          <div className="max-w-xl w-full">
             <div className="relative mb-5">
               <button
                 type="button"
@@ -87,12 +145,23 @@ function AddPurchase() {
             </div>
 
             <label className="text-sm font-semibold">Supplier</label>
-            <input
-              type="text"
-              value={supplierName}
-              onChange={(e) => setSupplierName(e.target.value)}
-              placeholder="Supplier Name"
-              className="w-full border px-4 py-2 rounded-md mb-3"
+            <CreatableSelect
+              options={supplierOptions}
+              onChange={(selected) => {
+                setSelectedSupplier(selected);
+                setSupplierInput(selected?.label || '');
+              }}
+              onInputChange={(inputValue, actionMeta) => {
+                if (actionMeta.action === 'input-change') {
+                  setSupplierInput(inputValue);
+                  setSelectedSupplier({ label: inputValue, value: null });
+                }
+              }}
+              value={selectedSupplier}
+              placeholder="Start typing or select a supplier"
+              className="mb-3"
+              isClearable
+              isSearchable
             />
 
             <div className="grid grid-cols-5 gap-2 font-semibold text-sm mb-2">
@@ -104,7 +173,7 @@ function AddPurchase() {
 
             <div className="max-h-80 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
               {items.map((item, index) => {
-                const selectedProduct = productOptions.find(p => p.value === parseInt(item.productId));
+                const selectedProduct = productOptions.find(p => p.value === item.productId);
                 const amount = item.quantity * item.price;
 
                 return (
@@ -114,7 +183,7 @@ function AddPurchase() {
                         <CreatableSelect
                           options={productOptions}
                           onChange={(option) => handleProductSelect(index, option)}
-                          value={item.productName ? { label: item.productName, value: item.productName } : null}
+                          value={selectedProduct}
                           placeholder="Select or type"
                           className="text-sm"
                           menuPortalTarget={document.body}
@@ -168,7 +237,10 @@ function AddPurchase() {
               <span>{formatCurrency(total)}</span>
             </div>
 
-            <button className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full">
+            <button
+              onClick={handleSubmit}
+              className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full"
+            >
               Save Invoice
             </button>
           </div>
