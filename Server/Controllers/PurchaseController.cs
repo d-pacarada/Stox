@@ -135,14 +135,26 @@
                 message.Body = builder.ToMessageBody();
 
                 using var smtp = new SmtpClient();
-                await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:Port"]), true);
+
+                try
+                {
+                    // Try STARTTLS (587)
+                    await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], 587, MailKit.Security.SecureSocketOptions.StartTls);
+                }
+                catch
+                {
+                    // Fallback to SSL (465)
+                    await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], 465, MailKit.Security.SecureSocketOptions.SslOnConnect);
+                }
+
                 await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
                 await smtp.SendAsync(message);
                 await smtp.DisconnectAsync(true);
 
                 return Ok(new { message = "Purchase invoice email sent successfully." });
             }
-            
+
+
             [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePurchase(int id)
     {

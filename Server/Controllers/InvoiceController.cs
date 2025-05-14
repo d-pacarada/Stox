@@ -262,25 +262,36 @@ namespace Server.Controllers
             try
             {
                 var pdfBytes = BuildInvoicePdf(request);
-
+        
                 var message = new MimeMessage();
                 message.From.Add(MailboxAddress.Parse(_config["EmailSettings:SenderEmail"]));
                 message.To.Add(MailboxAddress.Parse(request.To));
                 message.Subject = $"Invoice #{request.Number}";
-
+        
                 var builder = new BodyBuilder
                 {
                     TextBody = $"Dear customer,\n\nPlease find attached invoice #{request.Number}.\n\nBest regards,\nSTOX"
                 };
                 builder.Attachments.Add($"invoice_{request.Number}.pdf", pdfBytes, new ContentType("application", "pdf"));
                 message.Body = builder.ToMessageBody();
-
+        
                 using var smtp = new SmtpClient();
-                await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:Port"]), true);
+        
+                try
+                {
+                    // Try STARTTLS (587)
+                    await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], 587, MailKit.Security.SecureSocketOptions.StartTls);
+                }
+                catch
+                {
+                    // Fallback to SSL (465)
+                    await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], 465, MailKit.Security.SecureSocketOptions.SslOnConnect);
+                }
+        
                 await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
                 await smtp.SendAsync(message);
                 await smtp.DisconnectAsync(true);
-
+        
                 return Ok(new { message = "Invoice email sent successfully." });
             }
             catch (Exception ex)

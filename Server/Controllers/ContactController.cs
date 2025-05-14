@@ -45,74 +45,85 @@ namespace Server.Controllers
             return Ok("Message submitted and email sent successfully.");
         }
 
-        private async Task<bool> SendEmailAsync(string userEmail, string message)
+private async Task<bool> SendEmailAsync(string userEmail, string message)
+{
+    try
+    {
+        var email = new MimeMessage();
+        email.From.Add(new MailboxAddress("STOX Contact Form", _config["EmailSettings:SenderEmail"]));
+        email.To.Add(new MailboxAddress("STOX Admin", "stox.inform@gmail.com"));
+        email.Cc.Add(new MailboxAddress("Mete", "mekro112@gmail.com"));
+        email.Cc.Add(new MailboxAddress("Donart", "donart.pacarada@gmail.com"));
+        email.Subject = $"New Contact Message from {userEmail}";
+
+        string senderIp = HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Unknown";
+
+        var bodyBuilder = new BodyBuilder
         {
-            try
-            {
-                var email = new MimeMessage();
-                email.From.Add(new MailboxAddress("STOX Contact Form", _config["EmailSettings:SenderEmail"]));
-                email.To.Add(new MailboxAddress("STOX Admin", "stox.inform@gmail.com"));
-                email.Cc.Add(new MailboxAddress("Mete", "mekro112@gmail.com"));
-                email.Cc.Add(new MailboxAddress("Donart", "donart.pacarada@gmail.com"));
-                email.Subject = $"New Contact Message from {userEmail}";
+            HtmlBody = $@"
+              <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #ffffff;'>
+                <div style='text-align: center; margin-bottom: 20px;'>
+                    <img src='https://i.imgur.com/hIUt2pQ.png' alt='STOX Logo' style='max-height: 60px;' />
+                </div>
 
-                string senderIp = HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "Unknown";
+                <h2 style='color: #112D4E; border-bottom: 2px solid #3ABEF9; padding-bottom: 10px;'>📩 New Contact Message</h2>
 
-                var bodyBuilder = new BodyBuilder
-                {
-                    HtmlBody = $@"
-                      <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #ffffff;'>
-                        <div style='text-align: center; margin-bottom: 20px;'>
-                            <img src='https://i.imgur.com/hIUt2pQ.png' alt='STOX Logo' style='max-height: 60px;' />
-                        </div>
+                <p style='margin: 20px 0; font-size: 15px;'>
+                  <strong>Sender:</strong> 
+                  <a href='mailto:{userEmail}' style='color: #3ABEF9; text-decoration: none;'>{userEmail}</a>
+                </p>
 
-                        <h2 style='color: #112D4E; border-bottom: 2px solid #3ABEF9; padding-bottom: 10px;'>📩 New Contact Message</h2>
+                <p style='font-size: 15px;'><strong>Message:</strong></p>
+                <div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #3ABEF9; border-radius: 5px; font-size: 14px; line-height: 1.5;'>
+                  {System.Net.WebUtility.HtmlEncode(message).Replace("\n", "<br/>")}
+                </div>
 
-                        <p style='margin: 20px 0; font-size: 15px;'>
-                          <strong>Sender:</strong> 
-                          <a href='mailto:{userEmail}' style='color: #3ABEF9; text-decoration: none;'>{userEmail}</a>
-                        </p>
+                <div style='margin: 25px 0; text-align: center;'>
+                  <a href='mailto:{userEmail}' style='background-color: #3ABEF9; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;'>
+                    📧 Reply to {userEmail}
+                  </a>
+                </div>
 
-                        <p style='font-size: 15px;'><strong>Message:</strong></p>
-                        <div style='background-color: #f8f9fa; padding: 15px; border-left: 4px solid #3ABEF9; border-radius: 5px; font-size: 14px; line-height: 1.5;'>
-                          {System.Net.WebUtility.HtmlEncode(message).Replace("\n", "<br/>")}
-                        </div>
+                <hr style='margin: 30px 0; border: none; border-top: 1px solid #ddd;' />
 
-                        <div style='margin: 25px 0; text-align: center;'>
-                          <a href='mailto:{userEmail}' style='background-color: #3ABEF9; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;'>
-                            📧 Reply to {userEmail}
-                          </a>
-                        </div>
+                <p style='font-size: 12px; color: #777;'>
+                  📅 Submitted on <strong>{DateTime.Now:MMMM dd, yyyy HH:mm}</strong><br/>
+                  🌐 Sender IP: <strong>{senderIp}</strong>
+                </p>
 
-                        <hr style='margin: 30px 0; border: none; border-top: 1px solid #ddd;' />
+                <p style='font-size: 12px; color: #999; text-align: center; margin-top: 30px;'>
+                  This message was sent via the <strong>STOX Contact Form</strong>.
+                </p>
+              </div>"
+        };
 
-                        <p style='font-size: 12px; color: #777;'>
-                          📅 Submitted on <strong>{DateTime.Now:MMMM dd, yyyy HH:mm}</strong><br/>
-                          🌐 Sender IP: <strong>{senderIp}</strong>
-                        </p>
+        email.Body = bodyBuilder.ToMessageBody();
 
-                        <p style='font-size: 12px; color: #999; text-align: center; margin-top: 30px;'>
-                          This message was sent via the <strong>STOX Contact Form</strong>.
-                        </p>
-                      </div>"
-                };
+        using var smtp = new SmtpClient();
 
-                email.Body = bodyBuilder.ToMessageBody();
-
-                using var smtp = new SmtpClient();
-                await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
-                await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
-                await smtp.SendAsync(email);
-                await smtp.DisconnectAsync(true);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Email send failed (MailKit): " + ex.Message);
-                return false;
-            }
+        try
+        {
+            // Try STARTTLS on port 587
+            await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], 587, MailKit.Security.SecureSocketOptions.StartTls);
         }
+        catch
+        {
+            // If failed, try SSL on port 465
+            await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], 465, MailKit.Security.SecureSocketOptions.SslOnConnect);
+        }
+
+        await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
+        await smtp.SendAsync(email);
+        await smtp.DisconnectAsync(true);
+
+        return true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Email send failed (MailKit): " + ex.Message);
+        return false;
+    }
+}
 
         public class ContactRequest
         {
