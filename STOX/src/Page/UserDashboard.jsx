@@ -1,5 +1,3 @@
-// Full updated UserDashboard.js with Option 1 for monthly chart
-
 import React, { useEffect, useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,
@@ -24,7 +22,7 @@ function UserDashboard() {
 useEffect(() => {
   const fetchChartData = async () => {
     setLoading(true);
-    setChartData([]); // Reset chart data before fetching new data
+    setChartData([]); 
 
     try {
       const res = await fetch(`http://localhost:5064/api/chart/sales/${range}`, {
@@ -81,8 +79,8 @@ useEffect(() => {
   };
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency', currency: 'USD', maximumFractionDigits: 0
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency', currency: 'EUR', maximumFractionDigits: 0
     }).format(value);
   };
 
@@ -168,12 +166,12 @@ useEffect(() => {
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
           <div className="flex items-center gap-2">
-            <label htmlFor="range" className="font-semibold text-gray-700 text-sm">View:</label>
+            <label htmlFor="range" className="font-semibold text-gray-700 text-sm"></label>
             <select
               id="range"
               value={range}
               onChange={(e) => setRange(e.target.value)}
-              className="border rounded px-2 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-[#112D4E]"
+              className="bg-white rounded-lg shadow p-2 w-full mt-4 md:ml-13 md:mt-4"
             >
               <option value="daily">Daily</option>
               <option value="weekly">Weekly</option>
@@ -182,7 +180,7 @@ useEffect(() => {
             </select>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-2 w-full sm:w-auto">
+          <div className="bg-white rounded-lg shadow p-2 w-full sm:w-auto md:mr-15 md:mt-5">
             <h3 className="text-xs text-gray-500">Total Sales ({range})</h3>
             <p className="text-lg font-bold text-[#112D4E]">
               {formatCurrency(totalSales)}
@@ -214,7 +212,7 @@ useEffect(() => {
           </div>
         )}
 
-        <div className="mt-3">
+        <div className="mt-3 text-xs">
           {yearlyComparisonLoading ? (
             <div className="w-full h-48 bg-white rounded-lg shadow p-3 flex items-center justify-center mb-3">
               <div className="animate-pulse flex flex-col items-center">
