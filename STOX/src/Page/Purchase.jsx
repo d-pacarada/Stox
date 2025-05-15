@@ -202,7 +202,6 @@ function Purchase() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto flex-grow lg:mx-15">
           <table className="min-w-full border-collapse border border-gray-300">
             <thead className="bg-[#112D4E] text-white">
@@ -235,7 +234,6 @@ function Purchase() {
           </table>
         </div>
 
-        {/* Next */}
         <div className="flex justify-center items-center space-x-4 mt-6">
           <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}
             className={`px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#112D4E] text-white hover:bg-[#0b213f]'}`}>
@@ -248,21 +246,22 @@ function Purchase() {
           </button>
         </div>
 
-        {/* Summary */}
         <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
           <p>Total Purchases: {filteredPurchases.length}</p>
           <p>Total Amount: {formatCurrency(totalAmount)}</p>
         </div>
 
-        {/* Detail Modal */}
         {showModal && (
           <div className="fixed inset-0 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-lg relative">
-              <h2 className="text-xl font-bold text-[#112D4E] mb-4">Purchase Details</h2>
-              <table className="w-full text-sm">
+            <div className="bg-white p-6 rounded-xl max-w-xl w-full shadow-lg relative">
+              <h2 className="text-xl font-bold text-[#112D4E] border-b pb-2 mb-4">Purchase Details</h2>
+              <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="font-semibold text-[#112D4E]">
-                    <th>Product</th><th>Qty</th><th>Price</th><th>Amount</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -276,19 +275,19 @@ function Purchase() {
                   ))}
                 </tbody>
               </table>
-              <button onClick={() => setShowModal(false)} className="absolute top-2 right-4 text-xl font-bold text-[#112D4E] hover:text-red-600">×</button>
+              <button onClick={() => setShowModal(false)} className="absolute top-2 right-4 text-2xl font-bold text-[#112D4E] hover:text-red-500">×</button>
             </div>
           </div>
         )}
 
-        {/* Confirm Delete */}
         {showConfirm && (
-          <div className="fixed inset-0 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-md text-center">
-              <h2 className="text-lg font-bold mb-4">Are you sure you want to delete this purchase?</h2>
-              <div className="flex justify-center gap-4">
-                <button onClick={handleDelete} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Yes</button>
-                <button onClick={() => setShowConfirm(false)} className="border px-4 py-2 rounded hover:bg-gray-100">Cancel</button>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
+              <div className="text-red-600 text-4xl">!</div>
+              <h2 className="text-xl font-semibold">Are you sure you want to delete this purchase?</h2>
+              <div className="flex justify-center space-x-4 mt-4">
+                <button onClick={handleDelete} className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">Yes, I'm sure</button>
+                <button onClick={() => setShowConfirm(false)} className="border border-gray-400 px-6 py-2 rounded hover:bg-gray-100">No, cancel</button>
               </div>
             </div>
           </div>
