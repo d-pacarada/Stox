@@ -238,7 +238,7 @@ function Customer() {
         </div>
 
         {/* Total */}
-        <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-center items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 md:mb-8">
+        <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
           <p>Total Customers: {totalCustomers}</p>
         </div>
 
