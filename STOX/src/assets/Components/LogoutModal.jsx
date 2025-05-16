@@ -1,7 +1,28 @@
 import React from "react";
-import { ArrowRight } from "lucide-react"; // Optional: install `lucide-react` or use an <img>
+import { ArrowRight } from "lucide-react";
 
 export default function LogoutModal({ onConfirm, onCancel }) {
+  const handleConfirm = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      // Send logout log to backend
+      await fetch("http://localhost:5064/api/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    } catch (error) {
+      console.error("Failed to log logout activity:", error);
+    }
+
+    // 🧹 Clear token and redirect
+    localStorage.removeItem("token");
+    onConfirm(); // you can call navigation or redirection here if needed
+    window.location.href = "/login"; // or use `navigate("/login")` if using react-router
+  };
+
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white p-6 md:p-8 rounded-xl shadow-xl w-[90%] max-w-md border-[3px] border-[#112D4E] text-[#112D4E] relative">
@@ -24,7 +45,7 @@ export default function LogoutModal({ onConfirm, onCancel }) {
         {/* Buttons */}
         <div className="flex justify-center gap-4">
           <button
-            onClick={onConfirm}
+            onClick={handleConfirm}
             className="bg-orange-500 text-white font-semibold px-6 py-2 rounded-xl hover:bg-orange-600 transition"
           >
             Yes, I’m sure

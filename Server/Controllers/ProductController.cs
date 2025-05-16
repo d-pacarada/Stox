@@ -86,15 +86,24 @@ namespace Server.Controllers
             var userIdString = User.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userIdString))
                 return Unauthorized("User ID not found in token.");
-
+        
             product.User_ID = int.Parse(userIdString);
-
+        
             if (!await _context.Category.AnyAsync(c => c.Category_ID == product.Category_ID))
                 return BadRequest("Invalid Category ID.");
-
+        
             _context.Product.Add(product);
+        
+            // ✅ Log "Created Product"
+            _context.UserActivityLogs.Add(new UserActivityLog
+            {
+                UserId = product.User_ID,
+                Action = "Created Product",
+                Timestamp = DateTime.UtcNow
+            });
+        
             await _context.SaveChangesAsync();
-
+        
             return Ok(product);
         }
 

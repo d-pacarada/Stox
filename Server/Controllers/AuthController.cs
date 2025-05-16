@@ -6,6 +6,7 @@ using System.Text;
 using Server.Data;
 using Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
@@ -58,6 +59,15 @@ namespace Server.Controllers
             };
 
             _context.UserRole.Add(userRole);
+
+            // ✅ Log "Registered" action
+            _context.UserActivityLogs.Add(new UserActivityLog
+            {
+                UserId = createdUser.User_ID,
+                Action = "Registered",
+                Timestamp = DateTime.UtcNow
+            });
+
             await _context.SaveChangesAsync();
 
             var role = await _context.UserRole
@@ -66,7 +76,7 @@ namespace Server.Controllers
                 .Select(ur => ur.Role.Role_Name)
                 .FirstOrDefaultAsync();
 
-            var token = GenerateJwtToken(createdUser);
+            var token = GenerateJwtToken(createdUser, role);
 
             return Ok(new { token, role });
         }
@@ -84,7 +94,17 @@ namespace Server.Controllers
                 .Select(ur => ur.Role.Role_Name)
                 .FirstOrDefaultAsync();
 
-            var token = GenerateJwtToken(user);
+            // ✅ Log "Logged in" action
+            _context.UserActivityLogs.Add(new UserActivityLog
+            {
+                UserId = user.User_ID,
+                Action = "Logged in",
+                Timestamp = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+
+            var token = GenerateJwtToken(user, role);
             return Ok(new { token, role });
         }
 
@@ -98,7 +118,30 @@ namespace Server.Controllers
             return Ok(new { exists });
         }
 
-        private string GenerateJwtToken(User user)
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            var userIdClaim = User.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found.");
+
+            int userId = int.Parse(userIdClaim);
+
+            _context.UserActivityLogs.Add(new UserActivityLog
+            {
+                UserId = userId,
+                Action = "Logged out",
+                Timestamp = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            return Ok("Logout logged.");
+        }
+
+
+        // ✅ Accepts role and includes it in JWT claims
+        private string GenerateJwtToken(User user, string role)
         {
             var keyString = _config["Jwt:Key"];
             if (string.IsNullOrEmpty(keyString) || keyString.Length < 32)
@@ -113,7 +156,8 @@ namespace Server.Controllers
                 claims: new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim("userId", user.User_ID.ToString())
+                    new Claim("userId", user.User_ID.ToString()),
+                    new Claim(ClaimTypes.Role, role)
                 },
                 expires: DateTime.Now.AddDays(7),
                 signingCredentials: creds);

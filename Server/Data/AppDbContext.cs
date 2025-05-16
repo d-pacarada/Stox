@@ -17,7 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<Invoice> Invoice { get; set; }
     public DbSet<PurchaseInvoice> PurchaseInvoice { get; set; }
     public DbSet<PurchaseInvoiceItem> PurchaseInvoiceItem { get; set; }
-
+    public DbSet<UserActivityLog> UserActivityLogs { get; set; }
 
 
 
