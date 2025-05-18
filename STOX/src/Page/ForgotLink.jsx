@@ -13,16 +13,32 @@ function ForgotLink() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.email) {
-      setErrors({ email: "Email is required" });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!formData.email) {
+    setErrors({ email: "Email is required" });
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5064/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      alert(`Error: ${errorText}`);
     } else {
-      setErrors({});
-      // submit işlemi buraya
-      console.log("Email submitted:", formData.email);
+      const text = await response.text();
+      alert(text); // Or show success toast/message
     }
-  };
+  } catch (error) {
+    console.error("Error submitting email:", error);
+    alert("Something went wrong. Please try again.");
+  }
+};
 
   return (
     <div className='flex justify-center bg-white min-h-screen font-sans px-4 md:px-10 xl:px-24'>

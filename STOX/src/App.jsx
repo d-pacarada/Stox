@@ -4,7 +4,7 @@ import SignUpForm from './Page/SignUpForm';
 import StepTwo from './Page/StepTwo';
 import Contact from './Page/Contact';
 import Login from './Page/Login';
-import Forgotpassword from './Page/Forgotpassword';
+import ResetPassword from './Page/ResetPassword';
 import UserDashboard from './Page/UserDashboard';
 import AdminDashboard from './Page/AdminDashboard';
 import Product from './Page/Product';
@@ -34,7 +34,7 @@ function App() {
       <Route path="/step2" element={<StepTwo />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/Forgotpassword" element={<Forgotpassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/UserDashboard" element={<UserDashboard />} />
       <Route path="/AdminDashboard" element={<AdminDashboard />} />
       <Route path="/Product" element={<Product />} />

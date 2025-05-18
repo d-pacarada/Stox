@@ -7,6 +7,10 @@ using Server.Data;
 using Server.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using MailKit.Net.Smtp;
+using MimeKit;
+using System.Security.Cryptography;
+using Server.Models.Requests;
 
 namespace Server.Controllers
 {
@@ -60,7 +64,6 @@ namespace Server.Controllers
 
             _context.UserRole.Add(userRole);
 
-            // ✅ Log "Registered" action
             _context.UserActivityLogs.Add(new UserActivityLog
             {
                 UserId = createdUser.User_ID,
@@ -94,7 +97,6 @@ namespace Server.Controllers
                 .Select(ur => ur.Role.Role_Name)
                 .FirstOrDefaultAsync();
 
-            // ✅ Log "Logged in" action
             _context.UserActivityLogs.Add(new UserActivityLog
             {
                 UserId = user.User_ID,
@@ -139,8 +141,71 @@ namespace Server.Controllers
             return Ok("Logout logged.");
         }
 
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return BadRequest("Email is required.");
 
-        // ✅ Accepts role and includes it in JWT claims
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+                return Ok("If this email exists, a reset link has been sent.");
+
+            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+            var resetToken = new PasswordResetToken
+            {
+                User_ID = user.User_ID,
+                Token = token,
+                Expiration = DateTime.UtcNow.AddHours(1)
+            };
+
+            _context.PasswordResetTokens.Add(resetToken);
+            await _context.SaveChangesAsync();
+
+            var resetUrl = $"{_config["FrontendBaseUrl"]}/reset-password?token={Uri.EscapeDataString(token)}";
+
+            var message = new MimeMessage();
+            message.From.Add(MailboxAddress.Parse(_config["EmailSettings:SenderEmail"]));
+            message.To.Add(MailboxAddress.Parse(user.Email));
+            message.Subject = "Reset Your Password";
+            message.Body = new TextPart("plain")
+            {
+                Text = $"Hello,\n\nClick below to reset your password:\n{resetUrl}\n\nThis link will expire in 1 hour."
+            };
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:Port"]), true);
+            await smtp.AuthenticateAsync(
+                _config["EmailSettings:SenderEmail"],
+                _config["EmailSettings:SenderPassword"]);
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
+
+            return Ok("If this email exists, a reset link has been sent.");
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.NewPassword))
+                return BadRequest("Token and new password are required.");
+
+            var tokenEntry = await _context.PasswordResetTokens
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t => t.Token == request.Token && t.Expiration > DateTime.UtcNow);
+
+            if (tokenEntry == null)
+                return BadRequest("Invalid or expired token.");
+
+            tokenEntry.User.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+
+            _context.PasswordResetTokens.Remove(tokenEntry);
+            await _context.SaveChangesAsync();
+
+            return Ok("Password reset successful.");
+        }
+
         private string GenerateJwtToken(User user, string role)
         {
             var keyString = _config["Jwt:Key"];
@@ -166,7 +231,7 @@ namespace Server.Controllers
         }
     }
 
-    // Request Models
+    // Request Models (used only if you prefer inline; better to use Server.Models.Requests)
     public class RegisterRequest
     {
         public string BusinessName { get; set; }
