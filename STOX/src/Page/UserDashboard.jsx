@@ -159,7 +159,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-sm">
+    <div className="flex flex-col min-h-screen md:flex-row">
       <SidebarUser />
       <div className="flex-1 p-2 md:p-3 overflow-x-hidden">
         <Header />

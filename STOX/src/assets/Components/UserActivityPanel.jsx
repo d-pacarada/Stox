@@ -6,6 +6,7 @@ function UserActivityPanel() {
   const [loggedInToday, setLoggedInToday] = useState([]);
   const [latestLogs, setLatestLogs] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showUsersModal, setShowUsersModal] = useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);
   const token = localStorage.getItem("token");
 
@@ -37,16 +38,28 @@ function UserActivityPanel() {
       .catch(err => console.error("Activity fetch error:", err));
   }, []);
 
+  const displayedUsers = loggedInToday.slice(0, 2);
+
   return (
     <div className="w-full max-w-5xl mx-auto p-6 md:p-10 relative">
-      <h2 className="text-2xl font-bold text-[#112D4E] mb-6 flex items-center gap-2">
+      <h2 className="text-2xl font-bold text-[#112D4E] mb-4 flex items-center gap-2">
         <Activity className="text-orange-500" /> User Activity Panel
       </h2>
 
-      <div className="mb-10">
+      <div className="mb-3">
         <h3 className="text-lg font-semibold text-[#112D4E] mb-3 flex items-center gap-2">
           <LogIn size={20} /> Users Logged In Today
         </h3>
+        {loggedInToday.length > 2 && (
+          <div className="text-right mt-2">
+            <button
+              onClick={() => setShowUsersModal(true)}
+              className="text-sm text-blue-600 hover:underline font-medium mb-1"
+            >
+              View More
+            </button>
+          </div>
+        )}
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
           <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
             <thead className="bg-gray-100 text-[#112D4E] text-sm">
@@ -58,7 +71,7 @@ function UserActivityPanel() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {loggedInToday.map((row, idx) => (
+              {displayedUsers.map((row, idx) => (
                 <tr key={idx} className="hover:bg-gray-50 transition">
                   <td className="px-4 py-3 font-medium">{row.businessName}</td>
                   <td className="px-4 py-3">{row.count}</td>
@@ -97,7 +110,7 @@ function UserActivityPanel() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-1">
         <h3 className="text-lg font-semibold text-[#112D4E] flex items-center gap-2">
           <Clock size={20} /> Latest Activity Logs
         </h3>
@@ -126,6 +139,7 @@ function UserActivityPanel() {
         ))}
       </div>
 
+      {/* Modal for Activity Logs */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto p-6 relative">
@@ -152,6 +166,43 @@ function UserActivityPanel() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Logged-In Users */}
+      {showUsersModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto p-6 relative">
+            <button
+              onClick={() => setShowUsersModal(false)}
+              className="absolute top-3 right-4 text-gray-600 hover:text-red-500"
+            >
+              <X size={24} />
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-[#112D4E] flex items-center gap-2">
+              <LogIn /> All Users Logged In Today
+            </h3>
+            <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
+              <thead className="bg-gray-100 text-[#112D4E] text-sm">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Business Name</th>
+                  <th className="px-4 py-3 font-semibold">Login Count</th>
+                  <th className="px-4 py-3 font-semibold">Latest Login</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-100">
+                {loggedInToday.map((row, idx) => (
+                  <tr key={idx}>
+                    <td className="px-4 py-3 font-medium">{row.businessName}</td>
+                    <td className="px-4 py-3">{row.count}</td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {moment(row.latest).format("YYYY-MM-DD HH:mm")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
