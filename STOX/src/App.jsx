@@ -23,6 +23,7 @@ import SettingsPage from './Page/SettingsPage';
 import ContactDashboard from "./Page/ContactDashboard";
 import SidebarUser from './assets/Components/SidebarUser';
 import SidebarAdmin from './assets/Components/SidebarAdmin';
+import ForgotLink from "./Page/ForgotLink";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
       <Route path="/EditCustomer/:id" element={<EditCustomer />} />
       <Route path="/SettingsPage" element={<SettingsPage />} />
       <Route path="/messages" element={<ContactDashboard />} />
+      <Route path="/ForgotLink" element={<ForgotLink />} />
     </Routes>
   );
 }
