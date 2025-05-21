@@ -19,10 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<PurchaseInvoiceItem> PurchaseInvoiceItem { get; set; }
     public DbSet<UserActivityLog> UserActivityLogs { get; set; }
     public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
-
-
-
-
+    public DbSet<Invoice> Invoices { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     base.OnModelCreating(modelBuilder);

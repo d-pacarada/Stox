@@ -53,6 +53,10 @@ function SidebarUser() {
               <img src={Purchase} alt="" />
               <h3>Purchase</h3>
             </Link>
+            <Link to="/Income" className={linkClass("/Income")}>
+              <img src={Purchase} alt="" />
+              <h3>Incomes</h3>
+            </Link>
             {role === "Admin" && (
               <Link to="/AdminDashboard" className={linkClass("/AdminDashboard")}>
                 <img src={Panel} alt="" />
@@ -93,6 +97,7 @@ function SidebarUser() {
           <Link to="/Sale" className={mobileLinkClass("/Sale")}>Sales</Link>
           <Link to="/Customer" className={mobileLinkClass("/Customer")}>Customers</Link>
           <Link to="/Purchase" className={mobileLinkClass("/Purchase")}>Purchase</Link>
+          <Link to="/Income" className={mobileLinkClass("/Income")}>Income</Link>
           {role === "Admin" && (
             <Link to="/AdminDashboard" className={mobileLinkClass("/AdminDashboard")}>Admin Panel</Link>
           )}

@@ -72,7 +72,7 @@ const Login = () => {
             <button
               type="button"
               className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors bg-transparent border-none outline-none font-outfit cursor-pointer"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/LandingPage")}
             >
               &lt;&lt; Back
             </button>

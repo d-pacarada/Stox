@@ -24,6 +24,7 @@ import ContactDashboard from "./Page/ContactDashboard";
 import SidebarUser from './assets/Components/SidebarUser';
 import SidebarAdmin from './assets/Components/SidebarAdmin';
 import ForgotLink from "./Page/ForgotLink";
+import Income from "./Page/Income";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
       <Route path="/SettingsPage" element={<SettingsPage />} />
       <Route path="/messages" element={<ContactDashboard />} />
       <Route path="/ForgotLink" element={<ForgotLink />} />
+      <Route path="/Income" element={<Income />} />
     </Routes>
   );
 }
