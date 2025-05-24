@@ -56,13 +56,11 @@ namespace Server.Controllers
             if (defaultRole == null)
                 return StatusCode(500, "Default role 'User' not found.");
 
-            var userRole = new UserRole
+            _context.UserRole.Add(new UserRole
             {
                 User_ID = createdUser.User_ID,
                 Role_ID = defaultRole.Role_ID
-            };
-
-            _context.UserRole.Add(userRole);
+            });
 
             _context.UserActivityLogs.Add(new UserActivityLog
             {
@@ -80,8 +78,12 @@ namespace Server.Controllers
                 .FirstOrDefaultAsync();
 
             var token = GenerateJwtToken(createdUser, role);
+            var refreshToken = GenerateRefreshToken(createdUser.User_ID);
 
-            return Ok(new { token, role });
+            _context.RefreshTokens.Add(refreshToken);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { token, refreshToken = refreshToken.Token, role });
         }
 
         [HttpPost("login")]
@@ -104,20 +106,41 @@ namespace Server.Controllers
                 Timestamp = DateTime.UtcNow
             });
 
+            var token = GenerateJwtToken(user, role);
+            var refreshToken = GenerateRefreshToken(user.User_ID);
+
+            _context.RefreshTokens.Add(refreshToken);
             await _context.SaveChangesAsync();
 
-            var token = GenerateJwtToken(user, role);
-            return Ok(new { token, role });
+            return Ok(new { token, refreshToken = refreshToken.Token, role });
         }
 
-        [HttpPost("check-email")]
-        public async Task<IActionResult> CheckEmail([FromBody] EmailCheckRequest request)
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
         {
-            if (string.IsNullOrWhiteSpace(request.Email))
-                return BadRequest("Email is required.");
+            var tokenInDb = await _context.RefreshTokens
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.Token == refreshToken && r.Expires > DateTime.UtcNow && !r.IsRevoked);
 
-            var exists = await _context.User.AnyAsync(u => u.Email == request.Email);
-            return Ok(new { exists });
+            if (tokenInDb == null)
+                return Unauthorized("Invalid or expired refresh token.");
+
+            var role = await _context.UserRole
+                .Include(ur => ur.Role)
+                .Where(ur => ur.User_ID == tokenInDb.User_ID)
+                .Select(ur => ur.Role.Role_Name)
+                .FirstOrDefaultAsync();
+
+            tokenInDb.IsRevoked = true;
+            var newRefreshToken = GenerateRefreshToken(tokenInDb.User_ID);
+
+            _context.RefreshTokens.Add(newRefreshToken);
+
+            var newAccessToken = GenerateJwtToken(tokenInDb.User, role);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { token = newAccessToken, refreshToken = newRefreshToken.Token });
         }
 
         [HttpPost("logout")]
@@ -137,8 +160,26 @@ namespace Server.Controllers
                 Timestamp = DateTime.UtcNow
             });
 
+            var activeTokens = await _context.RefreshTokens
+                .Where(t => t.User_ID == userId && !t.IsRevoked && t.Expires > DateTime.UtcNow)
+                .ToListAsync();
+
+            foreach (var token in activeTokens)
+                token.IsRevoked = true;
+
             await _context.SaveChangesAsync();
-            return Ok("Logout logged.");
+
+            return Ok("Logout logged and tokens revoked.");
+        }
+
+        [HttpPost("check-email")]
+        public async Task<IActionResult> CheckEmail([FromBody] EmailCheckRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return BadRequest("Email is required.");
+
+            var exists = await _context.User.AnyAsync(u => u.Email == request.Email);
+            return Ok(new { exists });
         }
 
         [HttpPost("forgot-password")]
@@ -153,14 +194,13 @@ namespace Server.Controllers
 
             var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
-            var resetToken = new PasswordResetToken
+            _context.PasswordResetTokens.Add(new PasswordResetToken
             {
                 User_ID = user.User_ID,
                 Token = token,
                 Expiration = DateTime.UtcNow.AddHours(1)
-            };
+            });
 
-            _context.PasswordResetTokens.Add(resetToken);
             await _context.SaveChangesAsync();
 
             var resetUrl = $"{_config["FrontendBaseUrl"]}/reset-password?token={Uri.EscapeDataString(token)}";
@@ -176,9 +216,7 @@ namespace Server.Controllers
 
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(_config["EmailSettings:SmtpServer"], int.Parse(_config["EmailSettings:Port"]), true);
-            await smtp.AuthenticateAsync(
-                _config["EmailSettings:SenderEmail"],
-                _config["EmailSettings:SenderPassword"]);
+            await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
 
@@ -208,11 +246,7 @@ namespace Server.Controllers
 
         private string GenerateJwtToken(User user, string role)
         {
-            var keyString = _config["Jwt:Key"];
-            if (string.IsNullOrEmpty(keyString) || keyString.Length < 32)
-                throw new Exception("JWT Key is missing or too short in configuration.");
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -224,14 +258,25 @@ namespace Server.Controllers
                     new Claim("userId", user.User_ID.ToString()),
                     new Claim(ClaimTypes.Role, role)
                 },
-                expires: DateTime.Now.AddDays(7),
+                expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        private RefreshToken GenerateRefreshToken(int userId)
+        {
+            return new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false,
+                User_ID = userId
+            };
+        }
     }
 
-    // Request Models (used only if you prefer inline; better to use Server.Models.Requests)
+    // DTOs
     public class RegisterRequest
     {
         public string BusinessName { get; set; }

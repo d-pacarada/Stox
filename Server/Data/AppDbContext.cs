@@ -20,22 +20,23 @@ public class AppDbContext : DbContext
     public DbSet<UserActivityLog> UserActivityLogs { get; set; }
     public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    base.OnModelCreating(modelBuilder);
+    {
+        base.OnModelCreating(modelBuilder);
 
-    // Existing: Customer -> User cascade
-    modelBuilder.Entity<Customer>()
-        .HasOne(c => c.User)
-        .WithMany(u => u.Customers)
-        .HasForeignKey(c => c.User_ID)
-        .OnDelete(DeleteBehavior.Cascade);
+        // Existing: Customer -> User cascade
+        modelBuilder.Entity<Customer>()
+            .HasOne(c => c.User)
+            .WithMany(u => u.Customers)
+            .HasForeignKey(c => c.User_ID)
+            .OnDelete(DeleteBehavior.Cascade);
 
-    // ✅ New: PurchaseInvoice -> PurchaseInvoiceItem cascade
-    modelBuilder.Entity<PurchaseInvoice>()
-        .HasMany(p => p.PurchaseInvoiceItems)
-        .WithOne(i => i.PurchaseInvoice)
-        .HasForeignKey(i => i.PurchaseInvoice_ID)
-        .OnDelete(DeleteBehavior.Cascade);
-}
+        // ✅ New: PurchaseInvoice -> PurchaseInvoiceItem cascade
+        modelBuilder.Entity<PurchaseInvoice>()
+            .HasMany(p => p.PurchaseInvoiceItems)
+            .WithOne(i => i.PurchaseInvoice)
+            .HasForeignKey(i => i.PurchaseInvoice_ID)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }
