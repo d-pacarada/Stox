@@ -41,13 +41,13 @@ function See_Users() {
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:5064/api/users/${deleteId}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
-
+    
       if (!response.ok) {
         throw new Error("Failed to delete user");
       }
-
+    
       const updatedUsers = users.filter(user => user.user_ID !== deleteId);
       setUsers(updatedUsers);
     } catch (error) {
@@ -57,6 +57,7 @@ function See_Users() {
       setDeleteId(null);
     }
   };
+
 
   const filteredUsers = users
     .filter(user =>

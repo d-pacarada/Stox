@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Server.Data;
-using Server.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Server.Data;
+    using Server.Models;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-namespace Server.Controllers
-{
+    namespace Server.Controllers
+    {
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -21,38 +21,23 @@ namespace Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _context.User.ToListAsync();
+            var users = await _context.User
+                .Where(u => !u.IsDeleted)
+                .ToListAsync();
+
             return Ok(users);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
+                return NotFound();
 
-       [HttpDelete("{id}")]
-public async Task<IActionResult> DeleteUser(int id)
-{
-    var user = await _context.User
-        .Include(u => u.Customers)
-        .FirstOrDefaultAsync(u => u.User_ID == id);
+            user.IsDeleted = true;
+            await _context.SaveChangesAsync();
 
-    if (user == null)
-        return NotFound();
-
-    
-    if (user.Customers != null)
-        _context.Customer.RemoveRange(user.Customers);
-
-   
-    var products = _context.Product.Where(p => p.User_ID == id);
-    _context.Product.RemoveRange(products);
-
-    
-    var userRoles = _context.UserRole.Where(ur => ur.User_ID == id);
-    _context.UserRole.RemoveRange(userRoles);
-
-    
-    _context.User.Remove(user);
-    await _context.SaveChangesAsync();
-
-    return NoContent();
-}
-
+            return NoContent();
+        }
+        }
     }
-}

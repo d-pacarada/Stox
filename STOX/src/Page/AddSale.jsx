@@ -10,6 +10,7 @@ function AddSale() {
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [items, setItems] = useState([{ productId: '', quantity: 1, price: 0, warning: '' }]);
   const [total, setTotal] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -75,6 +76,8 @@ function AddSale() {
       newItems[index].warning = `Only ${selectedOption.stock} in stock`;
     } else if (selectedOption && selectedOption.stock === 0) {
       newItems[index].warning = 'This product is out of stock!';
+    } else if (newItems[index].quantity <= 0) {
+      newItems[index].warning = 'Quantity must be greater than 0';
     } else {
       newItems[index].warning = '';
     }
@@ -96,56 +99,69 @@ function AddSale() {
 
   const formatCurrency = (val) => val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
 
-  const handleSubmit = async () => {
-    if (!selectedCustomer || items.length === 0) {
-      alert("Please select a customer and add at least one item.");
-      return;
-    }
+const handleSubmit = async () => {
+  setErrorMessage("");
 
-    const hasStockIssue = items.some(item => {
-      const selected = productOptions.find(p => p.value === parseInt(item.productId));
-      return selected?.stock === 0;
+  if (!selectedCustomer || items.length === 0) {
+    setErrorMessage("Please select a customer and add at least one item.");
+    return;
+  }
+
+  const hasUnselectedProduct = items.some(item => !item.productId);
+  if (hasUnselectedProduct) {
+    setErrorMessage("Please select a product for each item.");
+    return;
+  }
+
+  const hasInvalidQuantity = items.some(item => item.quantity <= 0);
+  if (hasInvalidQuantity) {
+    setErrorMessage("All quantities must be greater than 0.");
+    return;
+  }
+
+  const hasStockIssue = items.some(item => {
+    const selected = productOptions.find(p => p.value === parseInt(item.productId));
+    return selected?.stock === 0;
+  });
+
+  if (hasStockIssue) {
+    setErrorMessage("One or more products are out of stock. Please remove or change them before submitting.");
+    return;
+  }
+
+  const mappedItems = items.map(item => ({
+    product_ID: parseInt(item.productId),
+    quantity: item.quantity,
+    price: item.price
+  }));
+
+  const payload = {
+    customer_ID: selectedCustomer,
+    total_Amount: total,
+    items: mappedItems
+  };
+
+  try {
+    const res = await fetch("http://localhost:5064/api/invoice", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
     });
 
-    if (hasStockIssue) {
-      alert("One or more products are out of stock. Please remove or change them before submitting.");
-      return;
-    }
+    if (!res.ok) throw new Error(await res.text());
 
-    const requestBody = {
-      customer_ID: selectedCustomer,
-      total_Amount: total,
-      items: items.map(item => ({
-        product_ID: item.productId,
-        quantity: item.quantity,
-        price: item.price
-      }))
-    };
+    alert("Invoice saved successfully!");
+    setSelectedCustomer('');
+    setItems([{ productId: '', quantity: 1, price: 0, warning: '' }]);
+    setTotal(0);
+  } catch (err) {
+    setErrorMessage("Failed to save invoice: " + err.message);
+  }
+};
 
-    try {
-      const res = await fetch("http://localhost:5064/api/invoice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (res.ok) {
-        alert("Invoice saved successfully!");
-        setSelectedCustomer('');
-        setItems([{ productId: '', quantity: 1, price: 0, warning: '' }]);
-        setTotal(0);
-      } else {
-        const err = await res.text();
-        alert("Failed to save invoice: " + err);
-      }
-    } catch (err) {
-      console.error("Error submitting invoice:", err);
-      alert("An error occurred while submitting the invoice.");
-    }
-  };
 
   const customerOptions = customers.map(c => ({
     value: c.customer_ID,
@@ -164,9 +180,8 @@ function AddSale() {
   return (
     <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
-      <div className="flex-1 p-4 flex flex-col overflow-hidden">
+      <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
-
         <div className="flex justify-center mt-10 2xl:mt-35 xl:mt-10">
           <div className="max-w-xl w-full max-h-screen">
             <div className="relative mb-5">
@@ -246,7 +261,6 @@ function AddSale() {
                         </button>
                       )}
                     </div>
-
                     {item.warning && (
                       <div className="text-red-600 text-xs mb-2">{item.warning}</div>
                     )}
@@ -266,6 +280,12 @@ function AddSale() {
               <span>Total:</span>
               <span>{formatCurrency(total)}</span>
             </div>
+
+            {errorMessage && (
+              <div className="text-red-600 text-sm font-medium mb-4 text-center">
+                {errorMessage}
+              </div>
+            )}
 
             <button
               onClick={handleSubmit}

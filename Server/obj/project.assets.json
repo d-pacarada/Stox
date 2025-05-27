@@ -2075,19 +2075,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\donar\\.nuget\\packages\\": {}
+    "C:\\Users\\38349\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\donar\\OneDrive\\Desktop\\Stox\\Stox\\Server\\StoxAPI.csproj",
+      "projectUniqueName": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj",
       "projectName": "StoxAPI",
-      "projectPath": "C:\\Users\\donar\\OneDrive\\Desktop\\Stox\\Stox\\Server\\StoxAPI.csproj",
-      "packagesPath": "C:\\Users\\donar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\donar\\OneDrive\\Desktop\\Stox\\Stox\\Server\\obj\\",
+      "projectPath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\StoxAPI.csproj",
+      "packagesPath": "C:\\Users\\38349\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\38349\\Desktop\\Stox\\Server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\donar\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\38349\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"

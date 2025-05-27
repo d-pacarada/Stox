@@ -45,11 +45,11 @@ namespace Server.Controllers
             var userIdString = User.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userIdString))
                 return Unauthorized("User ID not found in token.");
-
+        
             var userId = int.Parse(userIdString);
-
+        
             var products = await _context.Product
-                .Where(p => p.User_ID == userId)
+                .Where(p => p.User_ID == userId && !p.IsDeleted)
                 .Include(p => p.Category)
                 .Select(p => new
                 {
@@ -62,9 +62,10 @@ namespace Server.Controllers
                     p.Price
                 })
                 .ToListAsync();
-
+        
             return Ok(products);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
@@ -72,12 +73,13 @@ namespace Server.Controllers
             var product = await _context.Product
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.Product_ID == id);
-
+        
             if (product == null)
                 return NotFound();
-
-            return Ok(product);
+        
+            return Ok(product); // nuk filtrohet me IsDeleted që të shfaqet në fatura/histori
         }
+
 
         [HttpPost]
         [Authorize]
@@ -133,11 +135,12 @@ namespace Server.Controllers
             if (product == null)
                 return NotFound();
 
-            _context.Product.Remove(product);
+            product.IsDeleted = true;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
 
         // -----------------------------------------
         // CATEGORY METHODS BELOW

@@ -25,5 +25,7 @@ namespace Server.Models
         public int? User_ID { get; set; } // ✅ FIXED - Nullable User_ID
 
         public User? User { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

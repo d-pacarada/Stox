@@ -14,8 +14,10 @@ public class User
     public string Transit_Number { get; set; }
     public string Password { get; set; }
     public DateTime DATE { get; set; }
+
+    public bool IsDeleted { get; set; } = false; // ✅ Soft delete
+
     public ICollection<Customer> Customers { get; set; }
     public ICollection<Product> Products { get; set; }
-
-
 }
+

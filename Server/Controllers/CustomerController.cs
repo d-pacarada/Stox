@@ -24,15 +24,16 @@ namespace Server.Controllers
             var userIdString = User.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userIdString))
                 return Unauthorized("User ID not found in token.");
-
+        
             var userId = int.Parse(userIdString);
-
+        
             var customers = await _context.Customer
-                .Where(c => c.User_ID == userId)
+                .Where(c => c.User_ID == userId && !c.IsDeleted)
                 .ToListAsync();
-
+        
             return Ok(customers);
         }
+
 
         //GET api/customer/{id} → Get single customer by ID
         [HttpGet("{id}")]
@@ -43,8 +44,9 @@ namespace Server.Controllers
             if (customer == null)
                 return NotFound();
 
-            return Ok(customer);
+            return Ok(customer); // shfaqet edhe nëse është fshirë
         }
+
 
         //POST api/customer → Add new customer (assign user id from token)
         [HttpPost]
@@ -114,7 +116,7 @@ namespace Server.Controllers
             if (customer == null)
                 return NotFound();
 
-            _context.Customer.Remove(customer);
+            customer.IsDeleted = true;
             await _context.SaveChangesAsync();
 
             return NoContent();

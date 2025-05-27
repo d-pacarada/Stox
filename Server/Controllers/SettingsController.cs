@@ -26,28 +26,32 @@ namespace Server.Controllers
         public async Task<IActionResult> UpdateDetails([FromBody] UpdateDetailsRequest request)
         {
             var userId = int.Parse(User.FindFirst("userId")?.Value ?? "0");
-        
+
             var user = await _context.User.FindAsync(userId);
             if (user == null)
                 return NotFound("User not found.");
-        
-            user.Address = request.Address;
-            user.Phone_Number = request.PhoneNumber;
-            user.Transit_Number = request.TransitNumber;
-        
-            // ✅ Log "Updated Info"
+
+            // ✅ Vetëm përditëso nëse ka vlerë jo-bosh
+            if (!string.IsNullOrWhiteSpace(request.Address))
+                user.Address = request.Address;
+
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+                user.Phone_Number = request.PhoneNumber;
+
+            if (!string.IsNullOrWhiteSpace(request.TransitNumber))
+                user.Transit_Number = request.TransitNumber;
+
             _context.UserActivityLogs.Add(new UserActivityLog
             {
                 UserId = userId,
                 Action = "Updated Info",
                 Timestamp = DateTime.UtcNow
             });
-        
+
             await _context.SaveChangesAsync();
-        
+
             return Ok("Details updated successfully.");
         }
-
 
         // Update Password
         [HttpPut("update-password")]
