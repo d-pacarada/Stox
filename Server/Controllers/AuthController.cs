@@ -114,10 +114,14 @@ namespace Server.Controllers
 
             return Ok(new { token, refreshToken = refreshToken.Token, role });
         }
-
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
+            var refreshToken = request.RefreshToken;
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return BadRequest("The refreshToken field is required.");
+
             var tokenInDb = await _context.RefreshTokens
                 .Include(r => r.User)
                 .FirstOrDefaultAsync(r => r.Token == refreshToken && r.Expires > DateTime.UtcNow && !r.IsRevoked);
@@ -133,11 +137,9 @@ namespace Server.Controllers
 
             tokenInDb.IsRevoked = true;
             var newRefreshToken = GenerateRefreshToken(tokenInDb.User_ID);
-
             _context.RefreshTokens.Add(newRefreshToken);
 
             var newAccessToken = GenerateJwtToken(tokenInDb.User, role);
-
             await _context.SaveChangesAsync();
 
             return Ok(new { token = newAccessToken, refreshToken = newRefreshToken.Token });
@@ -258,7 +260,7 @@ namespace Server.Controllers
                     new Claim("userId", user.User_ID.ToString()),
                     new Claim(ClaimTypes.Role, role)
                 },
-                expires: DateTime.Now.AddMinutes(15),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

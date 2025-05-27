@@ -41,7 +41,19 @@ const Login = () => {
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("role", data.role);
+
+      // Dispatch login event to trigger token refresh scheduling in App.jsx
+      console.log("🔐 Dispatching login event...");
+      window.dispatchEvent(new CustomEvent('user-logged-in', {
+        detail: {
+          token: data.token,
+          refreshToken: data.refreshToken,
+          role: data.role,
+          timestamp: new Date().toISOString()
+        }
+      }));
 
       console.log("Login success:", data.token, data.role);
 
@@ -127,7 +139,7 @@ const Login = () => {
           </form>
 
           <p className="mt-5 text-sm text-center">
-            Don’t have an account? <Link to="/signup" className="text-amber-500 font-medium hover:underline">Sign up</Link>
+            Don't have an account? <Link to="/signup" className="text-amber-500 font-medium hover:underline">Sign up</Link>
           </p>
         </div>
       </div>

@@ -15,33 +15,53 @@ function UserDashboard() {
   const [yearlyComparisonLoading, setYearlyComparisonLoading] = useState(true);
   const [selectedYearData, setSelectedYearData] = useState(null);
 
-  const token = localStorage.getItem("token");
+  // Token refresh state
+  const [refreshInfo, setRefreshInfo] = useState({
+    refreshedAt: null,
+    nextRefreshIn: null
+  });
 
+  const token = localStorage.getItem("token");
   const COLORS = ['#112D4E', '#3F72AF', '#DBE2EF', '#F9F7F7', '#4E7FFF', '#48BB78'];
 
-useEffect(() => {
-  const fetchChartData = async () => {
-    setLoading(true);
-    setChartData([]); 
+  // Listen for token refresh events from App.jsx
+  useEffect(() => {
+    const handleRefreshEvent = (e) => {
+      console.log("📱 Token refresh event received in UserDashboard:", e.detail);
+      setRefreshInfo(e.detail);
+    };
 
-    try {
-      const res = await fetch(`http://localhost:5064/api/chart/sales/${range}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Chart data fetch failed");
-      const data = await res.json();
-      setChartData(data);
-      setTotalSales(data.reduce((sum, item) => sum + item.total, 0));
-    } catch (err) {
-      console.error("Failed to fetch chart data:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchChartData();
-}, [range, token]);
+    window.addEventListener("token-refreshed", handleRefreshEvent);
 
+    return () => {
+      window.removeEventListener("token-refreshed", handleRefreshEvent);
+    };
+  }, []);
 
+  // Chart data fetching effect
+  useEffect(() => {
+    const fetchChartData = async () => {
+      setLoading(true);
+      setChartData([]); 
+
+      try {
+        const res = await fetch(`http://localhost:5064/api/chart/sales/${range}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error("Chart data fetch failed");
+        const data = await res.json();
+        setChartData(data);
+        setTotalSales(data.reduce((sum, item) => sum + item.total, 0));
+      } catch (err) {
+        console.error("Failed to fetch chart data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchChartData();
+  }, [range, token]);
+
+  // Yearly comparison data fetching effect
   useEffect(() => {
     const fetchYearlyComparisonData = async () => {
       setYearlyComparisonLoading(true);
@@ -83,6 +103,7 @@ useEffect(() => {
       style: 'currency', currency: 'EUR', maximumFractionDigits: 0
     }).format(value);
   };
+
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
