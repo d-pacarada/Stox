@@ -113,7 +113,7 @@ function SettingsComponent() {
 
           <button
             onClick={saveDetails}
-            className="w-full bg-[#00B100] text-white font-medium py-2 rounded-md hover:bg-green-700 transition duration-300"
+            className="w-full bg-[#00B100] text-white font-medium py-2 rounded-md hover:bg-green-700 transition duration-300 cursor-pointer"
           >
             Save
           </button>
@@ -151,7 +151,7 @@ function SettingsComponent() {
           <button
             onClick={savePassword}
             disabled={loadingPassword}
-            className={`w-full text-white font-medium py-2 rounded-md transition duration-300 ${
+            className={`w-full text-white font-medium py-2 rounded-md transition duration-300 cursor-pointer ${
               loadingPassword ? "bg-gray-400" : "bg-[#00B100] hover:bg-green-700"
             }`}
           >

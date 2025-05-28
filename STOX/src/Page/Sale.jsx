@@ -282,10 +282,10 @@ function Sale() {
                     <td className="p-3">{formatCurrency(inv.total_Amount)}</td>
                     <td className="p-3">
                       <div className="flex flex-col sm:flex-row flex-wrap gap-2 justify-center items-center">
-                        <button onClick={() => viewInvoiceDetails(inv.invoice_ID)} className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md text-xs">View</button>
-                        <button onClick={() => confirmDelete(inv.invoice_ID)} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs">Delete</button>
-                        <button onClick={() => sendInvoiceEmail(inv.invoice_ID)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-xs">Email</button>
-                        <button onClick={() => downloadPdf(inv.invoice_ID)} className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-xs">PDF</button>
+                        <button onClick={() => viewInvoiceDetails(inv.invoice_ID)} className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md text-xs cursor-pointer">View</button>
+                        <button onClick={() => confirmDelete(inv.invoice_ID)} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-xs cursor-pointer">Delete</button>
+                        <button onClick={() => sendInvoiceEmail(inv.invoice_ID)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-xs cursor-pointer">Email</button>
+                        <button onClick={() => downloadPdf(inv.invoice_ID)} className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-xs cursor-pointer">PDF</button>
                       </div>
                     </td>
                   </tr>

@@ -79,7 +79,7 @@ function EditCustomer() {
           <h1 className="text-2xl font-semibold mb-6 text-center underline">Edit Customer</h1>
           <button
             type="button"
-            className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors mb-5"
+            className="text-sm font-medium text-gray-800 hover:text-amber-500 transition-colors mb-5 cursor-pointer"
             onClick={() => navigate(-1)}
           >
             &lt;&lt; Back
@@ -128,7 +128,7 @@ function EditCustomer() {
 
             <button
               type="submit"
-              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full"
+              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full cursor-pointer"
             >
               Update Customer
             </button>

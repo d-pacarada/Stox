@@ -107,7 +107,7 @@ export default function EditProduct() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="text-sm font-medium text-gray-800 hover:text-amber-500 mb-5"
+            className="text-sm font-medium text-gray-800 hover:text-amber-500 mb-5 cursor-pointer"
           >
             &lt;&lt; Back
           </button>
@@ -171,7 +171,7 @@ export default function EditProduct() {
 
             <button
               type="submit"
-              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full"
+              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full cursor-pointer"
             >
               Update Product
             </button>

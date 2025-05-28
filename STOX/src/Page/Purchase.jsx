@@ -222,10 +222,10 @@ function Purchase() {
                   <td className="p-3">{formatCurrency(p.total_Amount)}</td>
                   <td className="p-3">
                     <div className="flex flex-col sm:flex-row flex-wrap gap-2 justify-center items-center">
-                      <button onClick={() => viewPurchaseDetails(p.items)} className="bg-blue-600 text-white px-4 py-2 rounded text-xs hover:bg-blue-700">View</button>
-                      <button onClick={() => confirmDelete(p.purchase_ID)} className="bg-red-600 text-white px-4 py-2 rounded text-xs hover:bg-red-700">Delete</button>
-                      <button onClick={() => sendPurchaseEmail(p)} className="bg-green-600 text-white px-4 py-2 rounded text-xs hover:bg-green-700">Email</button>
-                      <button onClick={() => downloadPdf(p)} className="bg-gray-700 text-white px-4 py-2 rounded text-xs hover:bg-gray-800">PDF</button>
+                      <button onClick={() => viewPurchaseDetails(p.items)} className="bg-blue-600 text-white px-4 py-2 rounded text-xs hover:bg-blue-700 cursor-pointer">View</button>
+                      <button onClick={() => confirmDelete(p.purchase_ID)} className="bg-red-600 text-white px-4 py-2 rounded text-xs hover:bg-red-700 cursor-pointer">Delete</button>
+                      <button onClick={() => sendPurchaseEmail(p)} className="bg-green-600 text-white px-4 py-2 rounded text-xs hover:bg-green-700 cursor-pointer">Email</button>
+                      <button onClick={() => downloadPdf(p)} className="bg-gray-700 text-white px-4 py-2 rounded text-xs hover:bg-gray-800 cursor-pointer">PDF</button>
                     </div>
                   </td>
                 </tr>

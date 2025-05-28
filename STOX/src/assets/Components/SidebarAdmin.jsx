@@ -52,7 +52,7 @@ function SidebarAdmin() {
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>
-          <button onClick={() => setShowLogout(true)} className="flex items-center gap-3 text-white">
+          <button onClick={() => setShowLogout(true)} className="flex items-center gap-3 text-white cursor-pointer">
             <img src={logoutIcon} alt="" />
             <h3>Logout</h3>
           </button>

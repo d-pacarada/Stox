@@ -201,13 +201,13 @@ function Customer() {
                   <td className="p-3 space-x-2">
                     <button
                       onClick={() => navigate(`/EditCustomer/${customer.customer_ID}`)}
-                      className="bg-[#112D4E] text-white px-4 py-1 rounded hover:bg-[#0b213f]"
+                      className="bg-[#112D4E] text-white px-4 py-1 rounded hover:bg-[#0b213f] cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => confirmDelete(customer.customer_ID)}
-                      className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-800"
+                      className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-800 cursor-pointer"
                     >
                       Delete
                     </button>

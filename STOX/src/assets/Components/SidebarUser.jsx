@@ -10,6 +10,7 @@ import user from "../images/user.png";
 import stoxLogo from "../images/stox-logo.png";
 import Panel from "../images/panel.png";
 import Purchase from "../images/purchase.png";
+import Income from "../images/income.png";
 import LogoutModal from "./LogoutModal";
 
 function SidebarUser() {
@@ -51,10 +52,10 @@ function SidebarUser() {
             </Link>
              <Link to="/Purchase" className={linkClass("/Purchase")}>
               <img src={Purchase} alt="" />
-              <h3>Purchase</h3>
+              <h3 className='ml-0.5'>Purchase</h3>
             </Link>
             <Link to="/Income" className={linkClass("/Income")}>
-              <img src={Purchase} alt="" />
+              <img src={Income} alt="" />
               <h3>Incomes</h3>
             </Link>
             {role === "Admin" && (
@@ -74,7 +75,7 @@ function SidebarUser() {
             <img src={shape} alt="" />
             <h3>Settings</h3>
           </Link>
-          <button onClick={() => setShowLogout(true)} className="flex items-center gap-3 text-white">
+          <button onClick={() => setShowLogout(true)} className="flex items-center gap-3 text-white cursor-pointer">
             <img src={logoutIcon} alt="" />
             <h3>Logout</h3>
           </button>

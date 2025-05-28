@@ -167,7 +167,7 @@ function See_Users() {
                     <td className="p-3">
                       <button
                         onClick={() => confirmDelete(user.user_ID)}
-                        className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-800"
+                        className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-800 cursor-pointer"
                       >
                         Delete
                       </button>

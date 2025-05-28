@@ -188,7 +188,7 @@ const handleSubmit = async () => {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2"
+                className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2 cursor-pointer"
               >
                 &lt;&lt; Back
               </button>
@@ -289,7 +289,7 @@ const handleSubmit = async () => {
 
             <button
               onClick={handleSubmit}
-              className={`text-white px-6 py-2 rounded-md w-full ${isSubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#112D4E] hover:bg-[#0b213f]'}`}
+              className={`text-white px-6 py-2 rounded-md w-full cursor-pointer ${isSubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#112D4E] hover:bg-[#0b213f]'}`}
               disabled={isSubmitDisabled}
             >
               Save Invoice

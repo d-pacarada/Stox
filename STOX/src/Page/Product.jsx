@@ -209,21 +209,21 @@ function ProductList() {
               {currentProducts.map((product) => (
                 <tr key={product.product_ID} className="text-center border-b">
                   <td className="p-3">{product.localId}</td>
-                  <td className="p-3">{product.product_Name}</td>
-                  <td className="p-3">{product.description}</td>
+                  <td className="p-3 max-w-[180px] truncate">{product.product_Name}</td>
+                  <td className="p-3 max-w-[250px] truncate">{product.description}</td>
                   <td className="p-3">{product.category_Name}</td>
                   <td className="p-3">{product.stock_Quantity}</td>
                   <td className="p-3">{product.price}€</td>
                   <td className="p-3 space-x-2">
                     <button
                       onClick={() => navigate(`/EditProduct/${product.product_ID}`)}
-                      className="bg-[#112D4E] text-white px-4 py-1 rounded hover:bg-[#0b213f]"
+                      className="bg-[#112D4E] text-white px-4 py-1 rounded hover:bg-[#0b213f] cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => confirmDelete(product.product_ID)}
-                      className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-800"
+                      className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-800 cursor-pointer"
                     >
                       Delete
                     </button>

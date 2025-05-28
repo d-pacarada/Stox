@@ -130,7 +130,7 @@ function App() {
   }, 1000);
   setCountdownIntervalId(intervalId);
 
-  console.log("✅ Token refresh scheduled in 50 seconds");
+  console.log("✅ Token refresh scheduled in 3500 seconds");
 }, [refreshToken, refreshTimeoutId, countdownIntervalId]);
 
 

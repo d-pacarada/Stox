@@ -138,7 +138,7 @@
           <Header />
           <div className="p-10 max-w-lg mx-auto mt-10">
             <h1 className="text-2xl font-semibold mb-6 text-center underline">Add Product</h1>
-            <button type="button" onClick={() => navigate(-1)} className="text-sm font-medium text-gray-800 hover:text-amber-500 mb-5">&lt;&lt; Back</button>
+            <button type="button" onClick={() => navigate(-1)} className="text-sm font-medium text-gray-800 hover:text-amber-500 mb-5 cursor-pointer">&lt;&lt; Back</button>
 
             <form className="space-y-4" onSubmit={handleSubmit}>
               <input type="text" name="productName" placeholder="Product Name" value={formData.productName} onChange={(e) => handleInputChange("productName", e.target.value)} className="border p-2 w-full rounded-md" required />
@@ -167,7 +167,7 @@
 
               <input type="number" step="0.01" name="price" placeholder="Price" value={formData.price} onChange={(e) => handleInputChange("price", e.target.value)} className="border p-2 w-full rounded-md" required />
 
-              <button type="submit" className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full">Add Product</button>
+              <button type="submit" className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full cursor-pointer">Add Product </button>
             </form>
           </div>
         </div>

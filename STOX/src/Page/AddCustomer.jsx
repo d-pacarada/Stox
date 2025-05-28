@@ -113,7 +113,7 @@ function AddCustomer() {
 
             <button
               type="submit"
-              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full"
+              className="bg-[#112D4E] text-white px-6 py-2 rounded-md hover:bg-[#0b213f] w-full cursor-pointer"
             >
               Add Customer
             </button>

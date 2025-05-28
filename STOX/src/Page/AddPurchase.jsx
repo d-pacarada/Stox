@@ -142,7 +142,7 @@ function AddPurchase() {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2"
+                className="absolute left-0 text-sm font-medium text-gray-800 hover:text-amber-500 lg:mt-2 cursor-pointer"
               >
                 &lt;&lt; Back
               </button>
@@ -250,7 +250,7 @@ function AddPurchase() {
 
             <button
               onClick={handleSubmit}
-              className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full"
+              className="bg-[#112D4E] hover:bg-[#0b213f] text-white px-6 py-2 rounded-md w-full cursor-pointer"
             >
               Save Invoice
             </button>
