@@ -315,7 +315,7 @@ function Sale() {
         </div>
 
         {showConfirm && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 flex items-center justify-center z-50 md:ml-65">
             <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
               <div className="text-red-600 text-4xl">!</div>
               <h2 className="text-xl font-semibold">Are you sure you want to delete this invoice?</h2>
@@ -328,7 +328,7 @@ function Sale() {
         )}
 
         {showModal && (
-          <div className="fixed inset-0 flex justify-center items-center z-50">
+          <div className="fixed inset-0 flex justify-center items-center z-50 md:ml-65">
             <div className="bg-white rounded-xl p-6 max-w-xl w-full shadow-lg relative">
               <h2 className="text-xl font-bold text-[#112D4E] border-b pb-2 mb-4">Sale Details</h2>
               <table className="w-full text-sm text-left">

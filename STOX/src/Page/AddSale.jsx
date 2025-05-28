@@ -11,6 +11,7 @@ function AddSale() {
   const [items, setItems] = useState([{ productId: '', quantity: 1, price: 0, warning: '' }]);
   const [total, setTotal] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -55,20 +56,13 @@ function AddSale() {
     newItems[index].price = selectedOption.price;
     newItems[index].quantity = 1;
 
-    if (selectedOption.stock === 0) {
-      newItems[index].warning = 'This product is out of stock!';
-    } else {
-      newItems[index].warning = '';
-    }
-
+    newItems[index].warning = selectedOption.stock === 0 ? 'This product is out of stock!' : '';
     setItems(newItems);
   };
 
   const handleQuantityChange = (index, quantity) => {
     const newItems = [...items];
-    const selectedOption = productOptions.find(
-      (p) => p.value === parseInt(newItems[index].productId)
-    );
+    const selectedOption = productOptions.find(p => p.value === parseInt(newItems[index].productId));
 
     newItems[index].quantity = parseInt(quantity) || 0;
 
@@ -99,69 +93,64 @@ function AddSale() {
 
   const formatCurrency = (val) => val.toLocaleString('de-DE', { minimumFractionDigits: 2 });
 
-const handleSubmit = async () => {
-  setErrorMessage("");
+  const handleSubmit = async () => {
+    setErrorMessage("");
 
-  if (!selectedCustomer || items.length === 0) {
-    setErrorMessage("Please select a customer and add at least one item.");
-    return;
-  }
+    if (!selectedCustomer || items.length === 0) {
+      setErrorMessage("Please select a customer and add at least one item.");
+      return;
+    }
 
-  const hasUnselectedProduct = items.some(item => !item.productId);
-  if (hasUnselectedProduct) {
-    setErrorMessage("Please select a product for each item.");
-    return;
-  }
+    if (items.some(item => !item.productId)) {
+      setErrorMessage("Please select a product for each item.");
+      return;
+    }
 
-  const hasInvalidQuantity = items.some(item => item.quantity <= 0);
-  if (hasInvalidQuantity) {
-    setErrorMessage("All quantities must be greater than 0.");
-    return;
-  }
+    if (items.some(item => item.quantity <= 0)) {
+      setErrorMessage("All quantities must be greater than 0.");
+      return;
+    }
 
-  const hasStockIssue = items.some(item => {
-    const selected = productOptions.find(p => p.value === parseInt(item.productId));
-    return selected?.stock === 0;
-  });
+    if (items.some(item => {
+      const selected = productOptions.find(p => p.value === parseInt(item.productId));
+      return selected?.stock === 0;
+    })) {
+      setErrorMessage("One or more products are out of stock. Please remove or change them before submitting.");
+      return;
+    }
 
-  if (hasStockIssue) {
-    setErrorMessage("One or more products are out of stock. Please remove or change them before submitting.");
-    return;
-  }
+    const mappedItems = items.map(item => ({
+      product_ID: parseInt(item.productId),
+      quantity: item.quantity,
+      price: item.price
+    }));
 
-  const mappedItems = items.map(item => ({
-    product_ID: parseInt(item.productId),
-    quantity: item.quantity,
-    price: item.price
-  }));
+    const payload = {
+      customer_ID: selectedCustomer,
+      total_Amount: total,
+      items: mappedItems
+    };
 
-  const payload = {
-    customer_ID: selectedCustomer,
-    total_Amount: total,
-    items: mappedItems
+    try {
+      const res = await fetch("http://localhost:5064/api/invoice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+
+      setShowSuccessModal(true);
+      setSelectedCustomer('');
+      setItems([{ productId: '', quantity: 1, price: 0, warning: '' }]);
+      setTotal(0);
+    } catch (err) {
+      setErrorMessage("Failed to save invoice: " + err.message);
+    }
   };
-
-  try {
-    const res = await fetch("http://localhost:5064/api/invoice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) throw new Error(await res.text());
-
-    alert("Invoice saved successfully!");
-    setSelectedCustomer('');
-    setItems([{ productId: '', quantity: 1, price: 0, warning: '' }]);
-    setTotal(0);
-  } catch (err) {
-    setErrorMessage("Failed to save invoice: " + err.message);
-  }
-};
-
 
   const customerOptions = customers.map(c => ({
     value: c.customer_ID,
@@ -180,7 +169,7 @@ const handleSubmit = async () => {
   return (
     <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
       <SidebarUser />
-      <div className="flex-1 p-4 md:p-0 flex flex-col">
+      <div className="flex-1 p-4 md:p-0 flex flex-col relative">
         <Header />
         <div className="flex justify-center mt-10 2xl:mt-35 xl:mt-10">
           <div className="max-w-xl w-full max-h-screen">
@@ -296,6 +285,25 @@ const handleSubmit = async () => {
             </button>
           </div>
         </div>
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div className="absolute inset-0 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-md w-96 text-center border border-[#112D4E]">
+              <h2 className="text-xl font-semibold text-green-700">Invoice Saved!</h2>
+              <p className="mt-2 text-gray-700">The invoice has been recorded successfully.</p>
+              <button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate("/Sale");
+                }}
+                className="mt-4 px-6 py-2 bg-[#112D4E] text-white rounded hover:bg-[#0b213f]"
+              >
+                Go to Invoice List
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

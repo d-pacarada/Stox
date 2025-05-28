@@ -12,6 +12,7 @@ function AddPurchase() {
   const [items, setItems] = useState([{ productId: '', quantity: 1, price: 0 }]);
   const [total, setTotal] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -124,15 +125,14 @@ function AddPurchase() {
 
       if (!res.ok) throw new Error(await res.text());
 
-      alert('Purchase saved successfully!');
-      navigate('/Purchase');
+      setShowSuccessModal(true);
     } catch (err) {
       setErrorMessage("Failed to save purchase: " + err.message);
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen md:flex-row overflow-hidden">
+    <div className="flex flex-col min-h-screen md:flex-row overflow-hidden relative">
       <SidebarUser />
       <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
@@ -257,6 +257,25 @@ function AddPurchase() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="absolute inset-0 flex justify-center items-center z-50 md:ml-65">
+          <div className="bg-white p-6 rounded-lg shadow-md w-96 text-center border border-[#112D4E]">
+            <h2 className="text-xl font-semibold text-green-700">Purchase Saved!</h2>
+            <p className="mt-2 text-gray-700">The purchase has been recorded.</p>
+            <button
+              onClick={() => {
+                setShowSuccessModal(false);
+                navigate("/Purchase");
+              }}
+              className="mt-4 px-6 py-2 bg-[#112D4E] text-white rounded hover:bg-[#0b213f]"
+            >
+              Go to Purchase List
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

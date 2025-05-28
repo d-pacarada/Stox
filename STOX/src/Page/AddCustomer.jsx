@@ -11,6 +11,7 @@ function AddCustomer() {
     address: ''
   });
 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,7 +25,6 @@ function AddCustomer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.full_Name.trim() || !formData.email.trim() || !formData.phone_Number.trim() || !formData.address.trim()) {
       alert("Please fill in all fields");
       return;
@@ -45,8 +45,14 @@ function AddCustomer() {
       const resultText = await response.text();
       if (!response.ok) throw new Error(resultText);
 
-      alert("Customer added successfully!");
-      navigate("/Customer");
+      setShowSuccessModal(true);
+
+      setFormData({
+        full_Name: '',
+        email: '',
+        phone_Number: '',
+        address: ''
+      });
 
     } catch (error) {
       console.error("Error adding customer:", error);
@@ -57,7 +63,7 @@ function AddCustomer() {
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
       <SidebarUser />
-      <div className="flex-1 p-4 md:p-8 flex flex-col">
+      <div className="flex-1 p-4 md:p-8 flex flex-col relative">
         <Header />
         <div className="p-10 max-w-lg mx-auto mt-10">
           <h1 className="text-2xl font-semibold mb-6 text-center underline">Add Customer</h1>
@@ -119,6 +125,25 @@ function AddCustomer() {
             </button>
           </form>
         </div>
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div className="absolute inset-0 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-md w-96 text-center border border-[#112D4E]">
+              <h2 className="text-xl font-semibold text-green-700">Customer Added Successfully!</h2>
+              <p className="mt-2 text-gray-700">The customer has been saved.</p>
+              <button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate("/Customer");
+                }}
+                className="mt-4 px-6 py-2 bg-[#112D4E] text-white rounded hover:bg-[#0b213f]"
+              >
+                Go to Customer List
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

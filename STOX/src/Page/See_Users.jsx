@@ -207,7 +207,7 @@ function See_Users() {
         )}
 
         {showConfirm && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 flex items-center justify-center z-50 md:ml-65">
             <div className="bg-white p-6 rounded-lg text-center space-y-4 w-96 shadow-lg border border-[#112D4E]">
               <div className="text-red-600 text-4xl">!</div>
               <h2 className="text-xl font-semibold">Are you sure you want to delete this user?</h2>
