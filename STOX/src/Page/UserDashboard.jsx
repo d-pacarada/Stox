@@ -182,7 +182,7 @@ function UserDashboard() {
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
       <SidebarUser />
-      <div className="flex-1 p-2 md:p-3 overflow-x-hidden">
+      <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
