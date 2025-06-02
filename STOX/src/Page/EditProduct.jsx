@@ -17,6 +17,7 @@ export default function EditProduct() {
   });
 
   const [categories, setCategories] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     fetchCategories();
@@ -89,8 +90,11 @@ export default function EditProduct() {
 
       if (!response.ok) throw new Error("Failed to update product");
 
-      alert("Product updated successfully!");
-      navigate("/Product");
+      setShowPopup(true);
+      setTimeout(() => {
+        setShowPopup(false);
+        navigate("/Product");
+      }, 2000);
     } catch (error) {
       console.error("Error updating product:", error);
       alert("Failed to update product.");
@@ -178,6 +182,12 @@ export default function EditProduct() {
           </form>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 md:ml-30">
+          Product updated successfully!
+        </div>
+      )}
     </div>
   );
 }

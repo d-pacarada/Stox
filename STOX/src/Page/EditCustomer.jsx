@@ -11,9 +11,9 @@ function EditCustomer() {
     phone_Number: '',
     address: ''
   });
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch customer data on mount
   useEffect(() => {
     fetchCustomer();
   }, []);
@@ -61,8 +61,11 @@ function EditCustomer() {
 
       if (!response.ok) throw new Error("Failed to update customer");
 
-      alert("Customer updated successfully!");
-      navigate("/Customer");
+      setShowPopup(true);
+      setTimeout(() => {
+        setShowPopup(false);
+        navigate("/Customer");
+      }, 2000);
     } catch (error) {
       console.error("Error updating customer:", error);
       alert("Failed to update customer.");
@@ -135,6 +138,12 @@ function EditCustomer() {
           </form>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 md:ml-30">
+          Customer updated successfully!
+        </div>
+      )}
     </div>
   );
 }
