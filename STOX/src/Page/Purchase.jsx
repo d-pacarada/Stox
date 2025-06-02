@@ -23,8 +23,9 @@ function Purchase() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [messagePopup, setMessagePopup] = useState({ show: false, text: "", type: "success" });
 
+  const itemsPerPage = 5;
   const token = localStorage.getItem("token");
   const userIdRef = useRef(null);
   const localIdMapRef = useRef({});
@@ -81,15 +82,16 @@ function Purchase() {
       });
       const msg = await res.text();
       if (res.ok) {
-        alert(msg);
+        setMessagePopup({ show: true, text: msg, type: "success" });
         delete localIdMapRef.current[deleteId];
         localStorage.setItem(`purchaseLocalIdMap_${userIdRef.current}`, JSON.stringify(localIdMapRef.current));
         fetchPurchases(userIdRef.current);
       } else {
-        alert("Failed to delete purchase: " + msg);
+        setMessagePopup({ show: true, text: "Failed to delete purchase: " + msg, type: "error" });
       }
     } catch (err) {
       console.error("Error deleting purchase:", err);
+      setMessagePopup({ show: true, text: "Error deleting purchase", type: "error" });
     } finally {
       setShowConfirm(false);
     }
@@ -120,9 +122,10 @@ function Purchase() {
       });
 
       if (!res.ok) throw new Error(await res.text());
-      alert("Purchase email sent successfully.");
+
+      setMessagePopup({ show: true, text: "Purchase email sent successfully.", type: "success" });
     } catch (err) {
-      alert("Error sending email: " + err.message);
+      setMessagePopup({ show: true, text: "Error sending email: " + err.message, type: "error" });
     }
   };
 
@@ -155,7 +158,7 @@ function Purchase() {
       a.click();
       a.remove();
     } catch (err) {
-      alert("PDF generation failed: " + err.message);
+      setMessagePopup({ show: true, text: "PDF generation failed: " + err.message, type: "error" });
     }
   };
 
@@ -290,6 +293,14 @@ function Purchase() {
                 <button onClick={() => setShowConfirm(false)} className="border border-gray-400 px-6 py-2 rounded hover:bg-gray-100">No, cancel</button>
               </div>
             </div>
+          </div>
+        )}
+
+        {messagePopup.show && (
+          <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 md:ml-30
+            ${messagePopup.type === "success" ? "bg-green-600" : "bg-red-600"}`}>
+            {messagePopup.text}
+            <button onClick={() => setMessagePopup({ ...messagePopup, show: false })} className="ml-4 text-white font-bold">×</button>
           </div>
         )}
       </div>

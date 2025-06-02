@@ -23,8 +23,9 @@ function Sale() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [messagePopup, setMessagePopup] = useState({ show: false, text: "", type: "success" });
 
+  const itemsPerPage = 5;
   const token = localStorage.getItem("token");
   const userIdRef = useRef(null);
   const localIdMapRef = useRef({});
@@ -82,12 +83,12 @@ function Sale() {
       const data = contentType?.includes("application/json") ? await res.json() : await res.text();
 
       if (res.ok) {
-        alert(data.message || "Invoice deleted.");
+        setMessagePopup({ show: true, text: data.message || "Invoice deleted.", type: "success" });
         delete localIdMapRef.current[deleteId];
         localStorage.setItem(`invoiceLocalIdMap_${userIdRef.current}`, JSON.stringify(localIdMapRef.current));
         fetchInvoices(userIdRef.current);
       } else {
-        alert(data.message || "Failed to delete invoice.");
+        setMessagePopup({ show: true, text: data.message || "Failed to delete invoice.", type: "error" });
       }
     } catch (err) {
       console.error("Error deleting invoice:", err);
@@ -147,10 +148,10 @@ function Sale() {
         throw new Error(errText || "Email failed");
       }
 
-      alert("Invoice email sent successfully.");
+      setMessagePopup({ show: true, text: "Invoice email sent successfully.", type: "success" });
     } catch (err) {
       console.error("Email error:", err);
-      alert(`Email error: ${err.message}`);
+      setMessagePopup({ show: true, text: `Email error: ${err.message}`, type: "error" });
     }
   };
 
@@ -200,7 +201,7 @@ function Sale() {
       a.remove();
     } catch (err) {
       console.error("PDF generation failed", err);
-      alert(`Failed to generate PDF: ${err.message}`);
+      setMessagePopup({ show: true, text: `Failed to generate PDF: ${err.message}`, type: "error" });
     }
   };
 
@@ -229,6 +230,7 @@ function Sale() {
       <SidebarUser />
       <div className="flex-1 p-4 md:p-0 flex flex-col">
         <Header />
+
         <div className="flex flex-col mt-4 md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0 mx-5 lg:mx-15">
           <input
             type="text"
@@ -309,7 +311,7 @@ function Sale() {
           </button>
         </div>
 
-       <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
+        <div className="bg-[#112D4E] text-white p-2 rounded-md flex flex-col md:flex-row justify-around items-center text-lg font-semibold mt-8 space-y-4 md:space-y-0 md:ml-10 md:mr-10 lg:ml-15 lg:mr-15 md:mb-8">
           <p>Total Invoices: {filteredInvoices.length}</p>
           <p>Total Amount: {formatCurrency(totalAmount)}</p>
         </div>
@@ -353,6 +355,14 @@ function Sale() {
               </table>
               <button onClick={() => setShowModal(false)} className="absolute top-2 right-4 text-2xl font-bold text-[#112D4E] hover:text-red-500">×</button>
             </div>
+          </div>
+        )}
+
+        {messagePopup.show && (
+          <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 md:ml-30
+            ${messagePopup.type === "success" ? "bg-green-600" : "bg-red-600"}`}>
+            {messagePopup.text}
+            <button onClick={() => setMessagePopup({ ...messagePopup, show: false })} className="ml-4 text-white font-bold">×</button>
           </div>
         )}
       </div>
